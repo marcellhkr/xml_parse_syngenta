@@ -26,13 +26,13 @@ public class XmlParseSyngentaSchedule {
 	@Scheduled(fixedDelayString = "${property.schedule.fixeddelay.in.ms}")
 	public void runSchedule() {
 		System.out.println("\n");
-		log.info("Inicio da execucao da operacao xmlParseSyngentaService.runSchedule() {}", dateFormat.format(new Date()));
+		log.debug("Inicio da execucao da operacao xmlParseSyngentaService.runSchedule() {}", dateFormat.format(new Date()));
 		log.info("#################### .: Inicio do processamento XML Parser Syngenta:. #################### ");
 		
 		xmlParseSyngentaService.runService();
 		
 		log.info("#################### .: Fim do processamento XML Parser Syngenta:. #################### {}");
-		log.info("Fim da execucao da operacao xmlParseSyngentaService.runSchedule() {}", dateFormat.format(new Date()));
+		log.debug("Fim da execucao da operacao xmlParseSyngentaService.runSchedule() {}", dateFormat.format(new Date()));
 	}
 
 }

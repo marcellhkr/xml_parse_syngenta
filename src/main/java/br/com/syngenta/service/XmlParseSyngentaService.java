@@ -12,23 +12,17 @@ import com.google.common.base.Throwables;
 
 import br.com.syngenta.exception.PDFUtilsBusinessException;
 import br.com.syngenta.exception.XMLUtilsBusinessException;
-import br.com.syngenta.exception.XmlParseSyngentaServiceBusinessException;
-import br.com.syngenta.message.MessageEnum;
+import br.com.syngenta.util.FileUtils;
 import br.com.syngenta.util.PDFUtils;
 import br.com.syngenta.util.XMLUtils;
 import br.com.syngenta.xml.mapper.DocumentFolder;
 import br.com.syngenta.xml.mapper.DocumentFolder.DocumentFolderDetail.Document;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
-public class XmlParseSyngentaService 
-{
+public class XmlParseSyngentaService {
+	
 	private static final Logger log = LoggerFactory.getLogger(XmlParseSyngentaService.class);
 	
 	@Autowired
@@ -36,6 +30,9 @@ public class XmlParseSyngentaService
 	
 	@Autowired
 	XMLUtils xmlUtils;
+	
+	@Autowired
+	FileUtils fileUtils;
 	
 	@Value("${property.pdf.source.directory}")
 	String pdfSourceDirectory;
@@ -55,26 +52,11 @@ public class XmlParseSyngentaService
 		List<String> listFilesPDFs = null;
 		List<String> listFilesXmls = null;
 		try {
-			
-			
-			//
+
 			// verificando arquivos do diretorio de pdf´s de origem
-			//
-			try (Stream<Path> walk = Files.walk(Paths.get(pdfSourceDirectory))) {
+			listFilesPDFs = fileUtils.readFilesFromPath(pdfSourceDirectory,".PDF");
 
-				listFilesPDFs = walk.map(x -> x.toString())
-						.filter(f -> f.toUpperCase().endsWith(".PDF"))
-						
-						.collect(Collectors.toList());
-
-			} catch (Exception e) {
-				log.error("Error ao carregar arquivos pdf´s do diretorio {} de origem: ERRO: {}", pdfSourceDirectory, Throwables.getStackTraceAsString(e));
-				throw new XmlParseSyngentaServiceBusinessException(MessageEnum.XLM_PARSER_SERVICE_ERROR_001,e);
-			}
-			
-			//
 			// percorre a lista de arquivos pdf e gera o xml para cada um
-			//
 			for (int i=0;i<listFilesPDFs.size();i++) {
 				
 				try {
@@ -83,88 +65,39 @@ public class XmlParseSyngentaService
 					String pdfBase64 = pdfUtils.encodeBase64(sourceFile);
 					
 					// Message Header
-					DocumentFolder.Header dfHeader = new DocumentFolder.Header();
-					dfHeader.setVersion(310);
-					dfHeader.setDocumentType("DocumentFolder");
-					dfHeader.setSenderId("OSGT");
-					dfHeader.setReceiverId("SYNGENTA");
+					DocumentFolder.Header dfHeader = xmlUtils.createDocumentFolderHeader();
 					
-					// Document Folder Detail
-					DocumentFolder.DocumentFolderDetail dfDetail = new DocumentFolder.DocumentFolderDetail();
-					dfDetail.setMessageFunctionCode("OriginalMerge");
-					dfDetail.getDeliveryNumber().add("delivery"); //TODO Verificar de onde pegar
-					dfDetail.getOrderNumber().add("order number"); // TODO Verificar de onde pegar
+					// Documento Folder Detail
+					//TODO verificar de onde pegar delivery e ordernumber
+					DocumentFolder.DocumentFolderDetail dfDetail = xmlUtils.createDocumentFolderDetail("","");
 					
-					// Document Folder Party - DocumentProvider
-					DocumentFolder.DocumentFolderDetail.Party dfDetailPartyPovider = new DocumentFolder.DocumentFolderDetail.Party();
-					dfDetailPartyPovider.setPartyRoleCode("DocumentProvider");
+					// Document Folder Party - DocumentProvider/DocumentOwner
+					xmlUtils.createDocumentFolderDrtailParty(dfDetail,"DocumentProvider","DOC_PROVIDER_ID","OSGT");
+					xmlUtils.createDocumentFolderDrtailParty(dfDetail,"DocumentOwner","DOC_OWNER_ID","SYNGENTA");
 					
-					DocumentFolder.DocumentFolderDetail.Party.Identification dfDetailPartyIdtProvider = new DocumentFolder.DocumentFolderDetail.Party.Identification();
-					dfDetailPartyIdtProvider.setType("DOC_PROVIDER_ID");
-					dfDetailPartyIdtProvider.setValue("OSGT");
-					
-					dfDetailPartyPovider.setIdentification(dfDetailPartyIdtProvider);
-					
-					dfDetail.getParty().add(dfDetailPartyPovider);
-					
-					// Document Folder Party - DocumentOwner
-					DocumentFolder.DocumentFolderDetail.Party dfDetailPartyOwner = new DocumentFolder.DocumentFolderDetail.Party();
-					dfDetailPartyOwner.setPartyRoleCode("DocumentOwner");
-					
-					DocumentFolder.DocumentFolderDetail.Party.Identification dfDetailPartyIdtOwner = new DocumentFolder.DocumentFolderDetail.Party.Identification();
-					dfDetailPartyIdtOwner.setType("DOC_OWNER_ID");
-					dfDetailPartyIdtOwner.setValue("SYNGENTA");
-					
-					dfDetailPartyOwner.setIdentification(dfDetailPartyIdtOwner);
-					
-					dfDetail.getParty().add(dfDetailPartyOwner);
-					
-					//TODO verificar como adicionar o node acima
-					
-					// Document Folder
-					Document doc = new Document();
-					doc.setName("teste.xml"); //TODO verificar qual o nome
-					doc.setEncodingCode("Base64");
-					doc.setMimeType("application/pdf");
-					doc.setDocumentTypeCode("Base64"); //ODO veriricar
-					doc.setContent(pdfBase64);
+					// Document
+					String fileName = "teste.xml"; //TODO verificar como criar o nome
+					Document doc = xmlUtils.createDocument(pdfBase64,fileName);
 					
 					dfDetail.setDocument(doc);
 					
 					// monta xmlfinal
-					DocumentFolder xmlFinal = new DocumentFolder();
-					xmlFinal.setHeader(dfHeader);
-					xmlFinal.getDocumentFolderDetail().add(dfDetail);
+					DocumentFolder xmlFinal = xmlUtils.createDocumentFolder(dfHeader, dfDetail);
 
 					//gera o arquivo
 					xmlUtils.jaxbObjectToXML(xmlFinal, xmlTargetDirectory + "teste.xml");
 
-				} catch (PDFUtilsBusinessException | XMLUtilsBusinessException e) {
-					//TODO verificar o que fazer qdo der erro
-					//throw e;
-					e.printStackTrace();
+				} catch (Exception e) {
+					log.error("Erro ao processar arquivo {}. ERRO: {}", listFilesPDFs.get(i), Throwables.getStackTraceAsString(e));
+					//TODO verificar se move o arquivo para diretorio de erros
 				}				
 				
 			}
 			
-			//
 			// verificando arquivos do diretorio de xml´s de origem
-			//
-			try (Stream<Path> walk = Files.walk(Paths.get(xmlSourceDirectory))) {
+			listFilesXmls = fileUtils.readFilesFromPath(xmlSourceDirectory,".XML");
 
-				listFilesXmls = walk.map(x -> x.toString())
-						.filter(f -> f.toUpperCase().endsWith(".XML"))
-						
-						.collect(Collectors.toList());
-
-			} catch (Exception e) {
-				log.error("Error ao carregar arquivos xml´s do diretorio {} de origem: ERRO: {}", xmlSourceDirectory, Throwables.getStackTraceAsString(e));
-				throw new XmlParseSyngentaServiceBusinessException(MessageEnum.XLM_PARSER_SERVICE_ERROR_001,e);
-			}
-			//
 			// percorre a lista de arquivos xmls e gera o pdf para cada um
-			//
-
 			for (int i=0;i<listFilesXmls.size();i++) {
 				
 				try {
@@ -177,24 +110,20 @@ public class XmlParseSyngentaService
 					
 					File pdf = new File(fileName); //TODO verificar nome
 					
-					DocumentFolder df =  xmlUtils.xmlToJaxbObject(fileXml);
-					
-					DocumentFolder.DocumentFolderDetail dfDetail = df.getDocumentFolderDetail().get(0);
-					
-					String pdfBase64 = dfDetail.getDocument().getContent();
+					String pdfBase64 = xmlUtils.getTagContentXml(fileXml);
 					
 					pdf = pdfUtils.decodeBase64(pdf, pdfBase64);
 				
 
 				} catch (PDFUtilsBusinessException | XMLUtilsBusinessException e) {
-					//TODO verificar o que fazer qdo der erro
-					//throw e;
-					e.printStackTrace();
+					log.error("Erro ao processar arquivo {}. ERRO: {}", listFilesXmls.get(i), Throwables.getStackTraceAsString(e));
+					//TODO verificar se move o arquivo para diretorio de erros
 				}	
 			}
 			
 			System.out.println("tste");
 		} catch (Exception e) {
+			
 			e.printStackTrace();
 		}
 		
