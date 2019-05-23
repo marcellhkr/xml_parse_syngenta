@@ -20,20 +20,23 @@ public class FileUtils {
 	private static final Logger log = LoggerFactory.getLogger(FileUtils.class);
 	
 	public List<String> readFilesFromPath(String dir, String ext ) throws Exception {
-		
-		List<String> listFilesPDFs = null;
+		log.debug("[FileUtils] - Carregando arquivos {} do diretorio {}", ext, dir);
+		List<String> listFiles = null;
 		
 		try (Stream<Path> walk = Files.walk(Paths.get(dir))) {
 
-			listFilesPDFs = walk.map(x -> x.toString())
+			listFiles = walk.map(x -> x.toString())
 					.filter(f -> f.toUpperCase().endsWith(ext))
 					
 					.collect(Collectors.toList());
 
+			listFiles.forEach(x -> log.debug("[FileUtils] - Arquivo: {}", x.toString()));
+			
 		} catch (Exception e) {
 			throw new XmlParseSyngentaServiceBusinessException(MessageEnum.XLM_PARSER_SERVICE_ERROR_001,e);
 		}
-		return listFilesPDFs;
+		log.debug("[FileUtils] - Fim arquivos {} do diretorio {}", ext, dir);
+		return listFiles;
 	} 
 
 }
