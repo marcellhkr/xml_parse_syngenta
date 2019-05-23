@@ -69,14 +69,18 @@ public class XmlParseSyngentaService {
 					
 					pdf = pdfUtils.decodeBase64(pdf, pdfBase64);
 				
-					fileUtils.moveFile(pathFileNameXml, pathFileNameBkpXml);
+					try {
+						fileUtils.moveFile(pathFileNameXml, pathFileNameBkpXml);
+					} catch (Exception e) {
+						log.error("[XML_SERVICE] - Erro ao mover o arquivo {}. ERRO: {}", listFilesXmls.get(i), Throwables.getStackTraceAsString(e));
+					}	
 
 				} catch (Exception e) {
 					log.error("[XML_SERVICE] - Erro ao processar arquivo {}. ERRO: {}", listFilesXmls.get(i), Throwables.getStackTraceAsString(e));
 					try {
 						fileUtils.moveFile(xmlSourceDirectory + listFilesXmls.get(i), xmlErrorDirectory + listFilesXmls.get(i));
 					} catch (Exception ex) {
-						log.error("[XML_SERVICE] - Erro ao mover o arquivo {}. ERRO: {}", listFilesXmls.get(i), Throwables.getStackTraceAsString(e));
+						log.error("[XML_SERVICE] - Erro ao mover o arquivo {}. ERRO: {}", listFilesXmls.get(i), Throwables.getStackTraceAsString(ex));
 					}
 				}	
 			}

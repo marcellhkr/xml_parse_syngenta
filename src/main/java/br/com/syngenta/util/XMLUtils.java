@@ -73,7 +73,7 @@ public class XMLUtils extends DocumentFolder  {
         }
     }
 	
-	public void createDocumentFolderDrtailParty(DocumentFolderDetail dfDetail, String partyRole, String type, String value) throws Exception {
+	public DocumentFolderDetail createDocumentFolderDrtailParty(DocumentFolderDetail docDetail, String partyRole, String type, String value) throws Exception {
 		log.debug("[PDFUtils] - Criando no xml <party> -> Party Role: {}, type: {}, Value: {}", partyRole, type, value);
 		
 		Party party = new Party();
@@ -85,9 +85,10 @@ public class XMLUtils extends DocumentFolder  {
 		
 		party.setIdentification(idt);
 		
-		dfDetail.getParty().add(party);
+		docDetail.getParty().add(party);
 		
 		log.debug("[PDFUtils] - Fim criar no xml <party> -> Party Role: {}, type: {}, Value: {}", partyRole, type, value);
+		return docDetail;
 	}
 
 	public DocumentFolderDetail createDocumentFolderDetail(String delivery, String orderNumber) throws Exception {

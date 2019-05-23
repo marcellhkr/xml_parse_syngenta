@@ -3,6 +3,7 @@ package br.com.syngenta.util;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -43,7 +44,7 @@ public class FileUtils {
 	public void moveFile(String source, String target) throws Exception {
 		log.debug("[FileUtils] - Movendo arquivo de: {} para: {}", source, target);
 		
-		Files.move(Paths.get(source), Paths.get(target));
+		Files.move(Paths.get(source), Paths.get(target), StandardCopyOption.REPLACE_EXISTING);
 		
 		log.debug("[FileUtils] - Arquivo movido com sucesso!", source, target);
 		 
