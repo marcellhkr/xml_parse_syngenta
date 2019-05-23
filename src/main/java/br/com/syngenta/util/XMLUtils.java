@@ -9,8 +9,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import br.com.syngenta.exception.XMLUtilsBusinessException;
@@ -21,7 +21,15 @@ import br.com.syngenta.xml.mapper.DocumentFolder.DocumentFolderDetail.Document;
 @Component
 public class XMLUtils {
 	
-	private static final Logger log = LoggerFactory.getLogger(PDFUtils.class);
+	private static final Logger log = LogManager.getLogger(PDFUtils.class.getName());
+	private static final Integer versionXml = 310;
+	private static final String documentTypeXml = "DocumentFolder";
+	private static final String senderId = "OSGT";
+	private static final String receiverId = "SYNGENTA";
+	private static final String messageFunctionCodeXml = "OriginalMerge";
+	private static final String encodingCodeXml = "Base64";
+	private static final String mimeTypeXml = "application/pdf";
+	private static final String jaxbEncoding = "UTF-8";
 	
 	//PDF para o XML
 	public void jaxbObjectToXML(DocumentFolder documentFolder, String fileName) throws Exception {
@@ -32,7 +40,7 @@ public class XMLUtils {
             Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
  
             jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-            jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+            jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, jaxbEncoding);
  
             OutputStream os = new FileOutputStream( fileName );
             jaxbMarshaller.marshal( documentFolder, os );
@@ -64,7 +72,7 @@ public class XMLUtils {
     }
 	
 	public void createDocumentFolderDrtailParty(DocumentFolder.DocumentFolderDetail dfDetail, String partyRole, String type, String value) throws Exception {
-		log.debug("[PDFUtils] - Criando no xml <party>: Party Role: {}, type: {}, Value: {}", partyRole, type, value);
+		log.debug("[PDFUtils] - Criando no xml <party> -> Party Role: {}, type: {}, Value: {}", partyRole, type, value);
 		
 		DocumentFolder.DocumentFolderDetail.Party dfDetailPartyPovider = new DocumentFolder.DocumentFolderDetail.Party();
 		dfDetailPartyPovider.setPartyRoleCode(partyRole);
@@ -77,59 +85,68 @@ public class XMLUtils {
 		
 		dfDetail.getParty().add(dfDetailPartyPovider);
 		
-		log.debug("[PDFUtils] - Fim criar no xml <party>: Party Role: {}, type: {}, Value: {}", partyRole, type, value);
+		log.debug("[PDFUtils] - Fim criar no xml <party> -> Party Role: {}, type: {}, Value: {}", partyRole, type, value);
 	}
 
 	public DocumentFolder.DocumentFolderDetail createDocumentFolderDetail(String delivery, String orderNumber) throws Exception {
 		log.debug("[PDFUtils] - Criando no xml <CurrentFolderDetail>: delivery: {}, orderNumber: {}", delivery, orderNumber);
-		// Document Folder Detail
+		
 		DocumentFolder.DocumentFolderDetail dfDetail = new DocumentFolder.DocumentFolderDetail();
-		dfDetail.setMessageFunctionCode("OriginalMerge");
+		dfDetail.setMessageFunctionCode(messageFunctionCodeXml);
 		dfDetail.getDeliveryNumber().add(delivery);
 		dfDetail.getOrderNumber().add(orderNumber);
+		
 		log.debug("[PDFUtils] - Fim criando no xml <CurrentFolderDetail>: delivery: {}, orderNumber: {}", delivery, orderNumber);
 		return dfDetail;
 	}
 
 	public DocumentFolder.Header createDocumentFolderHeader() throws Exception {
 		log.debug("[PDFUtils] - Criando no xml <header>");
+		
 		DocumentFolder.Header dfHeader = new DocumentFolder.Header();
-		dfHeader.setVersion(310);
-		dfHeader.setDocumentType("DocumentFolder");
-		dfHeader.setSenderId("OSGT");
-		dfHeader.setReceiverId("SYNGENTA");
+		dfHeader.setVersion(versionXml);
+		dfHeader.setDocumentType(documentTypeXml);
+		dfHeader.setSenderId(senderId);
+		dfHeader.setReceiverId(receiverId);
+		
 		log.debug("[PDFUtils] - Fim criando no xml <header>");
 		return dfHeader;
 	}
 	
 	public Document createDocument(String pdfBase64, String fileName) throws Exception {
 		log.debug("[PDFUtils] - Criando no xml <document>");
+		
 		Document doc = new Document();
 		doc.setName(fileName);
-		doc.setEncodingCode("Base64");
-		doc.setMimeType("application/pdf");
-		doc.setDocumentTypeCode("Base64"); //TODO veriricar
+		doc.setEncodingCode(encodingCodeXml);
+		doc.setMimeType(mimeTypeXml);
+		doc.setDocumentTypeCode(encodingCodeXml); //TODO veriricar
 		doc.setContent(pdfBase64);
+		
 		log.debug("[PDFUtils] - Fim criando no xml <document>");
 		return doc;
 	}
 	
 	public DocumentFolder createDocumentFolder(DocumentFolder.Header dfHeader, DocumentFolder.DocumentFolderDetail dfDetail) throws Exception {
 		log.debug("[PDFUtils] - Criando no xml <DocumentFolder>");
+		
 		DocumentFolder xmlFinal = new DocumentFolder();
 		xmlFinal.setHeader(dfHeader);
 		xmlFinal.getDocumentFolderDetail().add(dfDetail);
+		
 		log.debug("[PDFUtils] - Fim criando no xml <DocumentFolder>");
 		return xmlFinal;
 	}
 
 	public String getTagContentXml(File fileXml) throws Exception {
 		log.debug("[PDFUtils] - Buscando tag <content> no xml {}", fileXml.getName());
+		
 		DocumentFolder df =  this.xmlToJaxbObject(fileXml);
 		
 		DocumentFolder.DocumentFolderDetail dfDetail = df.getDocumentFolderDetail().get(0);
 		
 		String pdfBase64 = dfDetail.getDocument().getContent();
+		
 		log.debug("[PDFUtils] - Fim buscando tag <content> no xml {}", fileXml.getName());
 		return pdfBase64;
 	}
