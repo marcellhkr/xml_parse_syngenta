@@ -17,9 +17,11 @@ import br.com.syngenta.exception.XMLUtilsBusinessException;
 import br.com.syngenta.message.MessageEnum;
 import br.com.syngenta.xml.mapper.DocumentFolder;
 import br.com.syngenta.xml.mapper.DocumentFolder.DocumentFolderDetail.Document;
+import br.com.syngenta.xml.mapper.DocumentFolder.DocumentFolderDetail.Party;
+import br.com.syngenta.xml.mapper.DocumentFolder.DocumentFolderDetail.Party.Identification;
 
 @Component
-public class XMLUtils {
+public class XMLUtils extends DocumentFolder  {
 	
 	private static final Logger log = LogManager.getLogger(PDFUtils.class.getName());
 	private static final Integer versionXml = 310;
@@ -71,39 +73,39 @@ public class XMLUtils {
         }
     }
 	
-	public void createDocumentFolderDrtailParty(DocumentFolder.DocumentFolderDetail dfDetail, String partyRole, String type, String value) throws Exception {
+	public void createDocumentFolderDrtailParty(DocumentFolderDetail dfDetail, String partyRole, String type, String value) throws Exception {
 		log.debug("[PDFUtils] - Criando no xml <party> -> Party Role: {}, type: {}, Value: {}", partyRole, type, value);
 		
-		DocumentFolder.DocumentFolderDetail.Party dfDetailPartyPovider = new DocumentFolder.DocumentFolderDetail.Party();
-		dfDetailPartyPovider.setPartyRoleCode(partyRole);
+		Party party = new Party();
+		party.setPartyRoleCode(partyRole);
 		
-		DocumentFolder.DocumentFolderDetail.Party.Identification dfDetailPartyIdtProvider = new DocumentFolder.DocumentFolderDetail.Party.Identification();
-		dfDetailPartyIdtProvider.setType(type);
-		dfDetailPartyIdtProvider.setValue(value);
+		Identification idt = new Identification();
+		idt.setType(type);
+		idt.setValue(value);
 		
-		dfDetailPartyPovider.setIdentification(dfDetailPartyIdtProvider);
+		party.setIdentification(idt);
 		
-		dfDetail.getParty().add(dfDetailPartyPovider);
+		dfDetail.getParty().add(party);
 		
 		log.debug("[PDFUtils] - Fim criar no xml <party> -> Party Role: {}, type: {}, Value: {}", partyRole, type, value);
 	}
 
-	public DocumentFolder.DocumentFolderDetail createDocumentFolderDetail(String delivery, String orderNumber) throws Exception {
+	public DocumentFolderDetail createDocumentFolderDetail(String delivery, String orderNumber) throws Exception {
 		log.debug("[PDFUtils] - Criando no xml <CurrentFolderDetail>: delivery: {}, orderNumber: {}", delivery, orderNumber);
 		
-		DocumentFolder.DocumentFolderDetail dfDetail = new DocumentFolder.DocumentFolderDetail();
+		DocumentFolderDetail dfDetail = new DocumentFolderDetail();
 		dfDetail.setMessageFunctionCode(messageFunctionCodeXml);
 		dfDetail.getDeliveryNumber().add(delivery);
 		dfDetail.getOrderNumber().add(orderNumber);
-		
+
 		log.debug("[PDFUtils] - Fim criando no xml <CurrentFolderDetail>: delivery: {}, orderNumber: {}", delivery, orderNumber);
 		return dfDetail;
 	}
 
-	public DocumentFolder.Header createDocumentFolderHeader() throws Exception {
+	public Header createDocumentFolderHeader() throws Exception {
 		log.debug("[PDFUtils] - Criando no xml <header>");
 		
-		DocumentFolder.Header dfHeader = new DocumentFolder.Header();
+		Header dfHeader = new Header();
 		dfHeader.setVersion(versionXml);
 		dfHeader.setDocumentType(documentTypeXml);
 		dfHeader.setSenderId(senderId);
@@ -127,7 +129,7 @@ public class XMLUtils {
 		return doc;
 	}
 	
-	public DocumentFolder createDocumentFolder(DocumentFolder.Header dfHeader, DocumentFolder.DocumentFolderDetail dfDetail) throws Exception {
+	public DocumentFolder createDocumentFolder(Header dfHeader, DocumentFolderDetail dfDetail) throws Exception {
 		log.debug("[PDFUtils] - Criando no xml <DocumentFolder>");
 		
 		DocumentFolder xmlFinal = new DocumentFolder();
@@ -143,7 +145,7 @@ public class XMLUtils {
 		
 		DocumentFolder df =  this.xmlToJaxbObject(fileXml);
 		
-		DocumentFolder.DocumentFolderDetail dfDetail = df.getDocumentFolderDetail().get(0);
+		DocumentFolderDetail dfDetail = df.getDocumentFolderDetail().get(0);
 		
 		String pdfBase64 = dfDetail.getDocument().getContent();
 		

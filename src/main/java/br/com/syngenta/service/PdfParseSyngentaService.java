@@ -14,7 +14,9 @@ import br.com.syngenta.util.FileUtils;
 import br.com.syngenta.util.PDFUtils;
 import br.com.syngenta.util.XMLUtils;
 import br.com.syngenta.xml.mapper.DocumentFolder;
+import br.com.syngenta.xml.mapper.DocumentFolder.DocumentFolderDetail;
 import br.com.syngenta.xml.mapper.DocumentFolder.DocumentFolderDetail.Document;
+import br.com.syngenta.xml.mapper.DocumentFolder.Header;
 
 @Service
 public class PdfParseSyngentaService {
@@ -62,11 +64,11 @@ public class PdfParseSyngentaService {
 					String pdfBase64 = pdfUtils.encodeBase64(pathFileNamePdf);
 					
 					// Message Header
-					DocumentFolder.Header dfHeader = xmlUtils.createDocumentFolderHeader();
+					Header dfHeader = xmlUtils.createDocumentFolderHeader();
 					
 					// Documento Folder Detail
 					//TODO verificar de onde pegar delivery e ordernumber
-					DocumentFolder.DocumentFolderDetail dfDetail = xmlUtils.createDocumentFolderDetail("","");
+					DocumentFolderDetail dfDetail = xmlUtils.createDocumentFolderDetail("","");
 					
 					// Document Folder Party - DocumentProvider/DocumentOwner
 					xmlUtils.createDocumentFolderDrtailParty(dfDetail,"DocumentProvider","DOC_PROVIDER_ID","OSGT");
