@@ -88,7 +88,11 @@ public class PdfParseSyngentaService {
 
 				} catch (Exception e) {
 					log.error("[PDF_SERVICE] - Erro ao processar arquivo {}. ERRO: {}", listFilesPDFs.get(i), Throwables.getStackTraceAsString(e));
-					fileUtils.moveFile(pdfSourceDirectory + listFilesPDFs.get(i), pdfErrorDirectory + listFilesPDFs.get(i));
+					try {
+						fileUtils.moveFile(pdfSourceDirectory + listFilesPDFs.get(i), pdfErrorDirectory + listFilesPDFs.get(i));
+					} catch (Exception ex) {
+						log.error("[PDF_SERVICE] - Erro ao mover o arquivo {}. ERRO: {}", listFilesPDFs.get(i), Throwables.getStackTraceAsString(e));
+					}
 				}				
 				
 			}
