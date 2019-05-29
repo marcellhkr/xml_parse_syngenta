@@ -53,19 +53,22 @@ public class XmlParseSyngentaService {
 
 			// percorre a lista de arquivos xmls e gera o pdf para cada um
 			for (int i=0;i<listFilesXmls.size();i++) {
+				String fileNameXmlBkpError = "";
 				
 				try {
 					
+					fileNameXmlBkpError = fileUtils.addTimestampToFileName(listFilesXmls.get(i));
 					String pathFileNameXml = xmlSourceDirectory + listFilesXmls.get(i);
-					String pathFileNameBkpXml = xmlBkpDirectory + listFilesXmls.get(i);
+					String pathFileNameBkpXml = xmlBkpDirectory + fileNameXmlBkpError;
 					
 					File fileXml = new File(pathFileNameXml);
 					
+					//String pdfFileName = xmlUtils.getTagXml(fileXml,"tag_file_name"); //TODO ver qual a tag tem o nome do arquivo destino
 					String pathFileNamePdfTarget = pdfTargetDirectory + "teste.pdf";
 					
-					File pdf = new File(pathFileNamePdfTarget); //TODO verificar nome
+					File pdf = new File(pathFileNamePdfTarget);
 					
-					String pdfBase64 = xmlUtils.getTagContentXml(fileXml);
+					String pdfBase64 = xmlUtils.getTagXml(fileXml,"content");
 					
 					pdf = pdfUtils.decodeBase64(pdf, pdfBase64);
 				
@@ -78,7 +81,7 @@ public class XmlParseSyngentaService {
 				} catch (Exception e) {
 					log.error("[XML_SERVICE] - Erro ao processar arquivo {}. ERRO: {}", listFilesXmls.get(i), Throwables.getStackTraceAsString(e));
 					try {
-						fileUtils.moveFile(xmlSourceDirectory + listFilesXmls.get(i), xmlErrorDirectory + listFilesXmls.get(i));
+						fileUtils.moveFile(xmlSourceDirectory + listFilesXmls.get(i), xmlErrorDirectory + fileNameXmlBkpError);
 					} catch (Exception ex) {
 						log.error("[XML_SERVICE] - Erro ao mover o arquivo {}. ERRO: {}", listFilesXmls.get(i), Throwables.getStackTraceAsString(ex));
 					}

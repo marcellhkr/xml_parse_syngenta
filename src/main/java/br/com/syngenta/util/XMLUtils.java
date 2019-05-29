@@ -1,17 +1,22 @@
 package br.com.syngenta.util;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
+import org.xml.sax.InputSource;
 
 import br.com.syngenta.exception.XMLUtilsBusinessException;
 import br.com.syngenta.message.MessageEnum;
@@ -141,14 +146,31 @@ public class XMLUtils extends DocumentFolder  {
 		return xmlFinal;
 	}
 
-	public String getTagContentXml(File fileXml) throws Exception {
-		log.debug("[PDFUtils] - Buscando tag <content> no xml {}", fileXml.getName());
+//	public String getTagContentXml(File fileXml) throws Exception {
+//		log.debug("[PDFUtils] - Buscando tag <content> no xml {}", fileXml.getName());
+//		
+//		DocumentFolder df =  this.xmlToJaxbObject(fileXml);
+//		
+//		DocumentFolderDetail dfDetail = df.getDocumentFolderDetail().get(0);
+//		
+//		String pdfBase64 = dfDetail.getDocument().getContent();
+//		
+//		log.debug("[PDFUtils] - Fim buscando tag <content> no xml {}", fileXml.getName());
+//		return pdfBase64;
+//	}
+	
+	public String getTagXml(File fileXml, String tag) throws Exception {
+		log.debug("[PDFUtils] - Buscando tag <{}> no xml {}", tag,fileXml.getName());
 		
-		DocumentFolder df =  this.xmlToJaxbObject(fileXml);
-		
-		DocumentFolderDetail dfDetail = df.getDocumentFolderDetail().get(0);
-		
-		String pdfBase64 = dfDetail.getDocument().getContent();
+		InputStream xmlStream = new FileInputStream(fileXml);
+		InputSource is = new InputSource();
+	    is.setByteStream(xmlStream);
+	    
+	    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+	    DocumentBuilder db = dbf.newDocumentBuilder();
+	    org.w3c.dom.Document doc = db.parse(is);
+	    
+	    String pdfBase64 = doc.getElementsByTagName(tag).item(0).getTextContent();
 		
 		log.debug("[PDFUtils] - Fim buscando tag <content> no xml {}", fileXml.getName());
 		return pdfBase64;

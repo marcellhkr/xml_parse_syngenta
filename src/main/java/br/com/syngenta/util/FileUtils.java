@@ -4,6 +4,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -50,5 +52,43 @@ public class FileUtils {
 		 
 		
 	}
+	
+	public String getOrderDeliveryNumber(String fileName, String field) throws Exception{
+		log.debug("[FileUtils] - Tratando {} do nome do arquivo: {}",field, fileName);
+		String ret = "";
+		
+		try {
+			String[] fields = fileName.split("-");
+			
+			if(field.equals("ordernumber")) {
+				ret = fields[1];
+			} else {
+				ret = fields[2].toUpperCase().replace(".PDF", "");
+			}
+			
+			log.debug("[FileUtils] - {}: {}", field, ret);
+		} catch (Exception e) {
+			//TODO criar mensagem
+			throw new FileUtilsBusinessException(MessageEnum.FILE_UTILS_ERROR_002,e, field, fileName);
+		}
+		
+		return ret;
+	}
+	
+	public String addTimestampToFileName(String fileName) throws Exception {
+		log.debug("[FileUtils] - Adicionando timestamp no nome do arquivo: {}",fileName);
+		String ret = "";
+		
+		String ext = fileName.substring(fileName.lastIndexOf("."));
+		String name = fileName.substring(0, fileName.indexOf(ext));
+		String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+		
+		ret = name.concat("_"+timestamp).concat(ext);
+		
+		log.debug("[FileUtils] - Novo nome do arquivo: {}",ret);
+		return ret;
+		
+	}
+
 
 }

@@ -55,11 +55,12 @@ public class PdfParseSyngentaService {
 			
 			// percorre a lista de arquivos pdf e gera o xml para cada um
 			for (int i=0;i<listFilesPDFs.size();i++) {
-				
+				String fileNamePdfBkpError = "";
 				try {
-					
+					String fileNamePdf = listFilesPDFs.get(i);
+					fileNamePdfBkpError = fileUtils.addTimestampToFileName(fileNamePdf);
 					String pathFileNamePdf = pdfSourceDirectory + listFilesPDFs.get(i);
-					String pathFileNameBkpPdf = pdfBkpDirectory + listFilesPDFs.get(i);
+					String pathFileNameBkpPdf = pdfBkpDirectory + fileNamePdfBkpError;
 					
 					String pdfBase64 = pdfUtils.encodeBase64(pathFileNamePdf);
 					
@@ -68,7 +69,9 @@ public class PdfParseSyngentaService {
 					
 					// Documento Folder Detail
 					//TODO verificar de onde pegar delivery e ordernumber
-					DocumentFolderDetail dfDetail = xmlUtils.createDocumentFolderDetail("","");
+					String orderNumber = fileUtils.getOrderDeliveryNumber(fileNamePdf,"ordernumber");
+					String deliveryNumber = fileUtils.getOrderDeliveryNumber(fileNamePdf,"deliverynumber");
+					DocumentFolderDetail dfDetail = xmlUtils.createDocumentFolderDetail(deliveryNumber,orderNumber);
 					
 					// Document Folder Party - DocumentProvider/DocumentOwner
 					xmlUtils.createDocumentFolderDrtailParty(dfDetail,"DocumentProvider","DOC_PROVIDER_ID","OSGT");
@@ -91,7 +94,7 @@ public class PdfParseSyngentaService {
 				} catch (Exception e) {
 					log.error("[PDF_SERVICE] - Erro ao processar arquivo {}. ERRO: {}", listFilesPDFs.get(i), Throwables.getStackTraceAsString(e));
 					try {
-						fileUtils.moveFile(pdfSourceDirectory + listFilesPDFs.get(i), pdfErrorDirectory + listFilesPDFs.get(i));
+						fileUtils.moveFile(pdfSourceDirectory + listFilesPDFs.get(i), pdfErrorDirectory + fileNamePdfBkpError);
 					} catch (Exception ex) {
 						log.error("[PDF_SERVICE] - Erro ao mover o arquivo {}. ERRO: {}", listFilesPDFs.get(i), Throwables.getStackTraceAsString(e));
 					}
