@@ -82,7 +82,7 @@ public class FileUtils {
 		String ext = fileName.substring(fileName.lastIndexOf("."));
 		String name = fileName.substring(0, fileName.indexOf(ext));
 		String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-		
+		Thread.sleep(1000);
 		ret = name.concat("_"+timestamp).concat(ext);
 		
 		log.debug("[FileUtils] - Novo nome do arquivo: {}",ret);

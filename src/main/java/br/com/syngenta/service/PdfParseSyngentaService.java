@@ -68,7 +68,6 @@ public class PdfParseSyngentaService {
 					Header dfHeader = xmlUtils.createDocumentFolderHeader();
 					
 					// Documento Folder Detail
-					//TODO verificar de onde pegar delivery e ordernumber
 					String orderNumber = fileUtils.getOrderDeliveryNumber(fileNamePdf,"ordernumber");
 					String deliveryNumber = fileUtils.getOrderDeliveryNumber(fileNamePdf,"deliverynumber");
 					DocumentFolderDetail dfDetail = xmlUtils.createDocumentFolderDetail(deliveryNumber,orderNumber);
@@ -78,7 +77,8 @@ public class PdfParseSyngentaService {
 					xmlUtils.createDocumentFolderDrtailParty(dfDetail,"DocumentOwner","DOC_OWNER_ID","SYNGENTA");
 					
 					// Document
-					String fileName = "teste.xml"; //TODO verificar como criar o nome
+					String fileName = "SyngentaDocumentFolderInbound.xml"; 
+					fileName = fileUtils.addTimestampToFileName(fileName);
 					Document doc = xmlUtils.createDocument(pdfBase64,fileName);
 					
 					dfDetail.setDocument(doc);
