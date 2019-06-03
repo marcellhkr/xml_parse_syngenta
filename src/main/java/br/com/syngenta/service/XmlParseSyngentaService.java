@@ -41,6 +41,9 @@ public class XmlParseSyngentaService {
 	
 	@Value("${property.xml.pdf.target.directory}")
 	String pdfTargetDirectory;	
+	
+	@Value("${property.json.ignore.document.type}")
+	String ignoreDocumentTypes;
 
 	public void runService() {
 		
@@ -63,8 +66,44 @@ public class XmlParseSyngentaService {
 					
 					File fileXml = new File(pathFileNameXml);
 					
-					//String pdfFileName = xmlUtils.getTagXml(fileXml,"tag_file_name"); //TODO ver qual a tag tem o nome do arquivo destino
-					String pathFileNamePdfTarget = pdfTargetDirectory + "teste.pdf";
+					//verifica se deve gerar o pdf ou nao conforme config do properties
+					String isImport = xmlUtils.getTagXml(fileXml,"isImportCustoms");
+					String docTypeCode = xmlUtils.getTagXml(fileXml,"documentTypeCode");
+					if (fileUtils.ignoreFile(docTypeCode, ignoreDocumentTypes, isImport)) {
+						try {
+							fileUtils.moveFile(pathFileNameXml, pathFileNameBkpXml);
+						} catch (Exception e) {
+							log.error("[XML_SERVICE] - Erro ao mover o arquivo {}. ERRO: {}", listFilesXmls.get(i), Throwables.getStackTraceAsString(e));
+						}
+						continue;
+					}
+					
+					//nome do arquivo destino
+					String pdfFileName = "";
+					String deliveryNumber = xmlUtils.getTagXml(fileXml,"deliveryNumber");
+					String orderNumber = xmlUtils.getTagXml(fileXml,"orderNumber");
+					String shipmentNumber = xmlUtils.getTagXml(fileXml,"shipmentNumber");
+					
+					if (!deliveryNumber.isEmpty()) {
+						pdfFileName += deliveryNumber;
+					} 
+					if (!orderNumber.isEmpty()) {
+						if (pdfFileName.isEmpty()) {
+							pdfFileName += orderNumber;
+						} else {
+							pdfFileName += "-" + orderNumber;
+						}
+						
+					} 
+					if (!shipmentNumber.isEmpty()) {
+						if (pdfFileName.isEmpty()) {
+							pdfFileName += shipmentNumber;
+						} else {
+							pdfFileName += "-" + shipmentNumber;
+						}
+					} 
+
+					String pathFileNamePdfTarget = pdfTargetDirectory + pdfFileName + ".pdf";
 					
 					File pdf = new File(pathFileNamePdfTarget);
 					

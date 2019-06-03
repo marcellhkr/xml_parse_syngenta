@@ -14,6 +14,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
 import br.com.syngenta.exception.FileUtilsBusinessException;
 import br.com.syngenta.message.MessageEnum;
 
@@ -29,8 +33,7 @@ public class FileUtils {
 		try (Stream<Path> walk = Files.walk(Paths.get(dir))) {
 
 			listFiles = walk.map(x -> x.getFileName().toString())
-					.filter(f -> f.toUpperCase().endsWith(ext))
-					
+					.filter(f -> f.toUpperCase().endsWith(ext))					
 					.collect(Collectors.toList());
 
 			listFiles.forEach(x -> log.debug("[FileUtils] - Arquivo: {}", x.toString()));
@@ -68,7 +71,6 @@ public class FileUtils {
 			
 			log.debug("[FileUtils] - {}: {}", field, ret);
 		} catch (Exception e) {
-			//TODO criar mensagem
 			throw new FileUtilsBusinessException(MessageEnum.FILE_UTILS_ERROR_002,e, field, fileName);
 		}
 		
@@ -90,5 +92,25 @@ public class FileUtils {
 		
 	}
 
+	public boolean ignoreFile(String docType, String jsonDocsTypes, String isImport) throws Exception{
+		boolean ignoreFile = false;
+		
+		String impExp = "";
+		if(isImport.equals("true")) {
+			impExp = "IMP";
+		} else {
+			impExp = "EXP";
+		}
+		
+		JsonObject convertedObject = new Gson().fromJson(jsonDocsTypes, JsonObject.class);
+		JsonArray jArray = convertedObject.getAsJsonArray(impExp);
+		
+		if (jArray.toString().contains(docType)) {
+			ignoreFile = true;
+		}		
+		
+		return ignoreFile;
+		
+	}
 
 }
