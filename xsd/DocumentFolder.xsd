@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+    <xs:element name="DocumentFolder">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="header">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="version" type="xs:int" minOccurs="1" maxOccurs="1"></xs:element>
+                            <xs:element name="documentType" type="xs:string" minOccurs="1" maxOccurs="1"></xs:element>
+                            <xs:element name="messageId" type="xs:int"></xs:element>
+                            <xs:element name="senderId" type="xs:string"></xs:element>
+                            <xs:element name="receiverId" type="xs:string"></xs:element>
+                            <xs:element name="count" type="xs:int"></xs:element>
+                            <xs:element name="functionalAcknowledgementRequest">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="functionalAcknowledgeRequestTypeCode" type="xs:string"></xs:element>
+                                        <xs:element name="isIncludeOriginalMessage" type="xs:string"></xs:element>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="documentFolderDetail" minOccurs="1" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="documentFolderReference" type="xs:string"></xs:element>
+                            <xs:element name="subMessageId" type="xs:int"></xs:element>
+                            <xs:element name="messageFunctionCode" type="xs:string"></xs:element>
+                            <xs:element name="subscriptionEvent">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="eventTypeCode" type="xs:string" minOccurs="1" maxOccurs="1"></xs:element>
+                                        <xs:element name="eventRoleCode" type="xs:string" minOccurs="1" maxOccurs="1"></xs:element>
+                                        <xs:element name="eventDate" type="xs:date" minOccurs="1" maxOccurs="1"></xs:element>
+                                        <xs:element name="eventDateTime" type="xs:dateTime" minOccurs="1" maxOccurs="1"></xs:element>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="deliveryNumber" type="xs:string" maxOccurs="unbounded"></xs:element>
+                            <xs:element name="orderNumber" type="xs:string" maxOccurs="unbounded"></xs:element>
+                            <xs:element name="shipmentNumber" type="xs:string" maxOccurs="unbounded"></xs:element>
+                            <xs:element name="documentFolderURL" type="xs:string" maxOccurs="1"></xs:element>
+                            <xs:element name="party" maxOccurs="unbounded">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="partyRoleCode" type="xs:string"></xs:element>
+                                        <xs:element name="identification">
+                                            <xs:complexType>
+                                                <xs:sequence>
+                                                    <xs:element name="type" type="xs:string" minOccurs="1" maxOccurs="1"></xs:element>
+                                                    <xs:element name="value" type="xs:string" minOccurs="1" maxOccurs="1"></xs:element>
+                                                </xs:sequence>
+                                            </xs:complexType>
+                                        </xs:element>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="document">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="revisionNumber" type="xs:int"></xs:element>
+                                        <xs:element name="name" type="xs:string"></xs:element>
+                                        <xs:element name="encodingCode" type="xs:string" minOccurs="1" maxOccurs="1"></xs:element>
+                                        <xs:element name="mimeType" type="xs:string" minOccurs="1" maxOccurs="1"></xs:element>
+                                        <xs:element name="documentTypeCode" type="xs:string"></xs:element>
+                                        <xs:element name="content" type="xs:string"></xs:element>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
