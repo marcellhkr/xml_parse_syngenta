@@ -1,6 +1,6 @@
 package br.com.syngenta.util;
 
-import br.com.syngenta.exception.PDFUtilsBusinessException;
+import br.com.syngenta.exception.BusinessException;
 import br.com.syngenta.message.MessageEnum;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.logging.log4j.LogManager;
@@ -15,7 +15,7 @@ public class PDFUtils {
 
     private static final Logger log = LogManager.getLogger(PDFUtils.class.getName());
 
-    public String encodeBase64(String sourceFile) throws PDFUtilsBusinessException {
+    public String encodeBase64(String sourceFile) throws BusinessException {
         log.debug("[PDFUtils] - Iniciando conversao do arquivo {} para base64", sourceFile);
 
         String encodedPDF = "";
@@ -26,7 +26,7 @@ public class PDFUtils {
             encodedPDF = this.writeByteArraysToString(base64EncodedData);
 
         } catch (Exception e) {
-            throw new PDFUtilsBusinessException(MessageEnum.PDF_UTILS_ERROR_001, e, sourceFile);
+            throw new BusinessException(MessageEnum.PDF_UTILS_ERROR_001, e, sourceFile);
         }
 
         log.debug("[PDFUtils] - Fim da conversao do arquivo {} para base64", sourceFile);
@@ -34,22 +34,17 @@ public class PDFUtils {
 
     }
 
-    public File decodeBase64(File file, String base64File) throws Exception {
+    public void decodeBase64(File file, String base64File) throws Exception {
         log.debug("[PDFUtils] - Iniciando desconversao de base64 para arquivo pdf");
 
-        File filePDF = null;
-
         try {
-
             byte[] decodedBytes = Base64.decodeBase64(loadStringAsBytesArray(base64File));
-
-            filePDF = this.writeByteArraysToFile(file, decodedBytes);
+            this.writeByteArraysToFile(file, decodedBytes);
 
             log.debug("[PDFUtils] - Fim da desconversao de base64 para arquivo pdf");
-            return filePDF;
 
         } catch (Exception e) {
-            throw new PDFUtilsBusinessException(MessageEnum.PDF_UTILS_ERROR_002, e);
+            throw new BusinessException(MessageEnum.PDF_UTILS_ERROR_002, e);
         }
 
     }
