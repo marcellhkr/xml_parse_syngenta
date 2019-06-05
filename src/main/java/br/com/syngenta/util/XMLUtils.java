@@ -1,6 +1,6 @@
 package br.com.syngenta.util;
 
-import br.com.syngenta.exception.XMLUtilsBusinessException;
+import br.com.syngenta.exception.BusinessException;
 import br.com.syngenta.message.MessageEnum;
 import br.com.syngenta.xml.mapper.DocumentFolder;
 import br.com.syngenta.xml.mapper.DocumentFolder.DocumentFolderDetail.Document;
@@ -10,13 +10,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 
 @Component
@@ -33,7 +32,7 @@ public class XMLUtils extends DocumentFolder {
     private static final String jaxbEncoding = "UTF-8";
 
     //PDF para o XML
-    public void jaxbObjectToXML(DocumentFolder documentFolder, String fileName) throws Exception {
+    public void jaxbObjectToXML(DocumentFolder documentFolder, String fileName) throws BusinessException{
         log.debug("[PDFUtils] - Iniciando geracao do arquivo XML: {}", fileName);
 
         try {
@@ -48,8 +47,8 @@ public class XMLUtils extends DocumentFolder {
 
             log.debug("[PDFUtils] - Fim da geracao do arquivo XML: {}", fileName);
 
-        } catch (Exception e) {
-            throw new XMLUtilsBusinessException(MessageEnum.XML_UTILS_ERROR_001, e);
+        } catch (FileNotFoundException | JAXBException  e) {
+            throw  new BusinessException(MessageEnum.XML_UTILS_ERROR_001, e);
         }
     }
 
@@ -68,11 +67,11 @@ public class XMLUtils extends DocumentFolder {
             return documentFolder;
 
         } catch (JAXBException e) {
-            throw new XMLUtilsBusinessException(MessageEnum.XML_UTILS_ERROR_002, e);
+            throw new BusinessException(MessageEnum.XML_UTILS_ERROR_002, e);
         }
     }
 
-    public DocumentFolderDetail createDocumentFolderDrtailParty(DocumentFolderDetail docDetail, String partyRole, String type, String value) throws Exception {
+    public DocumentFolderDetail createDocumentFolderDrtailParty( String partyRole, String type, String value) {
         log.debug("[PDFUtils] - Criando no xml <party> -> Party Role: {}, type: {}, Value: {}", partyRole, type, value);
 
         Party party = new Party();
@@ -84,25 +83,29 @@ public class XMLUtils extends DocumentFolder {
 
         party.setIdentification(idt);
 
+        DocumentFolderDetail docDetail = new DocumentFolderDetail();
         docDetail.getParty().add(party);
 
-        log.debug("[PDFUtils] - Fim criar no xml <party> -> Party Role: {}, type: {}, Value: {}", partyRole, type, value);
         return docDetail;
     }
 
-    public DocumentFolderDetail createDocumentFolderDetail(String delivery, String orderNumber) throws Exception {
+    public DocumentFolderDetail createDocumentFolderDetail(String delivery, String orderNumber, Document doc) throws Exception {
         log.debug("[PDFUtils] - Criando no xml <CurrentFolderDetail>: delivery: {}, orderNumber: {}", delivery, orderNumber);
 
         DocumentFolderDetail dfDetail = new DocumentFolderDetail();
         dfDetail.setMessageFunctionCode(messageFunctionCodeXml);
         dfDetail.getDeliveryNumber().add(delivery);
         dfDetail.getOrderNumber().add(orderNumber);
+        dfDetail.setDocument(doc);
+        // Document Folder Party - DocumentProvider/DocumentOwner
+        createDocumentFolderDrtailParty( "DocumentProvider", "DOC_PROVIDER_ID", "OSGT");
+        createDocumentFolderDrtailParty( "DocumentOwner", "DOC_OWNER_ID", "SYNGENTA");
 
         log.debug("[PDFUtils] - Fim criando no xml <CurrentFolderDetail>: delivery: {}, orderNumber: {}", delivery, orderNumber);
         return dfDetail;
     }
 
-    public Header createDocumentFolderHeader() throws Exception {
+    public Header createDocumentFolderHeader() {
         log.debug("[PDFUtils] - Criando no xml <header>");
 
         Header dfHeader = new Header();
@@ -110,9 +113,7 @@ public class XMLUtils extends DocumentFolder {
         dfHeader.setDocumentType(documentTypeXml);
         dfHeader.setSenderId(senderId);
         dfHeader.setReceiverId(receiverId);
-
-        log.debug("[PDFUtils] - Fim criando no xml <header>");
-        return dfHeader;
+        return header;
     }
 
     public Document createDocument(String pdfBase64, String fileName) throws Exception {
@@ -129,16 +130,6 @@ public class XMLUtils extends DocumentFolder {
         return doc;
     }
 
-    public DocumentFolder createDocumentFolder(Header dfHeader, DocumentFolderDetail dfDetail) throws Exception {
-        log.debug("[PDFUtils] - Criando no xml <DocumentFolder>");
-
-        DocumentFolder xmlFinal = new DocumentFolder();
-        xmlFinal.setHeader(dfHeader);
-        xmlFinal.getDocumentFolderDetail().add(dfDetail);
-
-        log.debug("[PDFUtils] - Fim criando no xml <DocumentFolder>");
-        return xmlFinal;
-    }
 
 //	public String getTagContentXml(File fileXml) throws Exception {
 //		log.debug("[PDFUtils] - Buscando tag <content> no xml {}", fileXml.getName());
@@ -153,21 +144,25 @@ public class XMLUtils extends DocumentFolder {
 //		return pdfBase64;
 //	}
 
-    public String getTagXml(File fileXml, String tag) throws Exception {
+    public String getTagXml(File fileXml, String tag)  {
         log.debug("[PDFUtils] - Buscando tag <{}> no xml {}", tag, fileXml.getName());
 
-        InputStream xmlStream = new FileInputStream(fileXml);
-        InputSource is = new InputSource();
-        is.setByteStream(xmlStream);
+        try {
+            InputStream xmlStream = new FileInputStream(fileXml);
+            InputSource is = new InputSource();
+            is.setByteStream(xmlStream);
 
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        DocumentBuilder db = dbf.newDocumentBuilder();
-        org.w3c.dom.Document doc = db.parse(is);
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            org.w3c.dom.Document doc = db.parse(is);
 
-        String pdfBase64 = doc.getElementsByTagName(tag).item(0).getTextContent();
+            String pdfBase64 = doc.getElementsByTagName(tag).item(0).getTextContent();
 
-        log.debug("[PDFUtils] - Fim buscando tag <content> no xml {}", fileXml.getName());
-        return pdfBase64;
+            return pdfBase64;
+        } catch (ParserConfigurationException | SAXException | IOException e) {
+            log.error(e);
+        }
+        return "";
     }
 
 }

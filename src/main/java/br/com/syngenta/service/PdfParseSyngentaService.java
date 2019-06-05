@@ -46,64 +46,44 @@ public class PdfParseSyngentaService {
 
         List<String> listFilesPDFs = null;
 
-        try {
+        // verificando arquivos do diretorio de pdf´s de origem
+        listFilesPDFs = fileUtils.readFilesFromPath(pdfSourceDirectory, ".PDF");
 
-            // verificando arquivos do diretorio de pdf´s de origem
-            listFilesPDFs = fileUtils.readFilesFromPath(pdfSourceDirectory, ".PDF");
+        // percorre a lista de arquivos pdf e gera o xml para cada um
+        for (int i = 0; i < listFilesPDFs.size(); i++) {
+            String file = listFilesPDFs.get(i);
+            String fileNamePdf = file;
+            String fileNamePdfBkp = fileUtils.addTimestampToFileName(fileNamePdf);
+            try {
 
-            // percorre a lista de arquivos pdf e gera o xml para cada um
-            for (int i = 0; i < listFilesPDFs.size(); i++) {
-                String fileNamePdfBkpError = "";
-                try {
-                    String fileNamePdf = listFilesPDFs.get(i);
-                    fileNamePdfBkpError = fileUtils.addTimestampToFileName(fileNamePdf);
-                    String pathFileNamePdf = pdfSourceDirectory + listFilesPDFs.get(i);
-                    String pathFileNameBkpPdf = pdfBkpDirectory + fileNamePdfBkpError;
+                String pathFileNamePdf = pdfSourceDirectory + file;
+                String pathFileNameBkpPdf = pdfBkpDirectory + fileNamePdfBkp;
 
-                    String pdfBase64 = pdfUtils.encodeBase64(pathFileNamePdf);
+                String pdfBase64 = pdfUtils.encodeBase64(pathFileNamePdf);
 
-                    // Message Header
-                    Header dfHeader = xmlUtils.createDocumentFolderHeader();
+                DocumentFolder xmlFinal = new DocumentFolder();
+                // Message Header
+                xmlFinal.setHeader(xmlUtils.createDocumentFolderHeader());
 
-                    // Documento Folder Detail
-                    String orderNumber = fileUtils.getOrderDeliveryNumber(fileNamePdf, "ordernumber");
-                    String deliveryNumber = fileUtils.getOrderDeliveryNumber(fileNamePdf, "deliverynumber");
-                    DocumentFolderDetail dfDetail = xmlUtils.createDocumentFolderDetail(deliveryNumber, orderNumber);
+                // Documento Folder Detail
+                String orderNumber = fileUtils.getOrderDeliveryNumber(fileNamePdf, "ordernumber");
+                String deliveryNumber = fileUtils.getOrderDeliveryNumber(fileNamePdf, "deliverynumber");
+                String fileName = fileUtils.addTimestampToFileName("SyngentaDocumentFolderInbound.xml");
+                Document doc = xmlUtils.createDocument(pdfBase64, fileName);
+                xmlFinal.getDocumentFolderDetail().add(xmlUtils.createDocumentFolderDetail(deliveryNumber, orderNumber,doc));
 
-                    // Document Folder Party - DocumentProvider/DocumentOwner
-                    xmlUtils.createDocumentFolderDrtailParty(dfDetail, "DocumentProvider", "DOC_PROVIDER_ID", "OSGT");
-                    xmlUtils.createDocumentFolderDrtailParty(dfDetail, "DocumentOwner", "DOC_OWNER_ID", "SYNGENTA");
+                //gera o arquivo
+                xmlUtils.jaxbObjectToXML(xmlFinal, xmlTargetDirectory + fileName);
 
-                    // Document
-                    String fileName = "SyngentaDocumentFolderInbound.xml";
-                    fileName = fileUtils.addTimestampToFileName(fileName);
-                    Document doc = xmlUtils.createDocument(pdfBase64, fileName);
+                fileUtils.moveFile(pathFileNamePdf, pathFileNameBkpPdf);
 
-                    dfDetail.setDocument(doc);
-
-                    // monta xmlfinal
-                    DocumentFolder xmlFinal = xmlUtils.createDocumentFolder(dfHeader, dfDetail);
-
-                    //gera o arquivo
-                    xmlUtils.jaxbObjectToXML(xmlFinal, xmlTargetDirectory + fileName);
-
-                    fileUtils.moveFile(pathFileNamePdf, pathFileNameBkpPdf);
-
-                } catch (Exception e) {
-                    log.error("[PDF_SERVICE] - Erro ao processar arquivo {}. ERRO: {}", listFilesPDFs.get(i), Throwables.getStackTraceAsString(e));
-                    try {
-                        fileUtils.moveFile(pdfSourceDirectory + listFilesPDFs.get(i), pdfErrorDirectory + fileNamePdfBkpError);
-                    } catch (Exception ex) {
-                        log.error("[PDF_SERVICE] - Erro ao mover o arquivo {}. ERRO: {}", listFilesPDFs.get(i), Throwables.getStackTraceAsString(e));
-                    }
-                }
-
+            } catch (Exception e) {
+                log.error("[PDF_SERVICE] - Erro ao processar arquivo {}. ERRO: {}", file, Throwables.getStackTraceAsString(e));
+                fileUtils.moveFile(pdfSourceDirectory + file, pdfErrorDirectory + fileNamePdfBkp);
             }
 
-        } catch (Exception e) {
-            log.error("[PDF_SERVICE] - Erro ao ler arquivos do diretorio: {} ERRO: {}", pdfSourceDirectory, Throwables.getStackTraceAsString(e));
         }
-
     }
+
 
 }

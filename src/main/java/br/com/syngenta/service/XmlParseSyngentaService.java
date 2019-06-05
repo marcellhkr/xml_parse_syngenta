@@ -17,6 +17,14 @@ import java.util.List;
 public class XmlParseSyngentaService {
 
     private static final Logger log = LogManager.getLogger(XmlParseSyngentaService.class.getName());
+    public static final String IS_IMPORT_CUSTOMS = "isImportCustoms";
+    public static final String DOCUMENT_TYPE_CODE = "documentTypeCode";
+    public static final String DELIVERY_NUMBER = "deliveryNumber";
+    public static final String ORDER_NUMBER = "orderNumber";
+    public static final String SHIPMENT_NUMBER = "shipmentNumber";
+    public static final String XML = ".XML";
+    public static final String CONTENT = "content";
+    public static final String PDF = ".pdf";
 
     @Autowired
     PDFUtils pdfUtils;
@@ -46,87 +54,70 @@ public class XmlParseSyngentaService {
 
 
         List<String> listFilesXmls = null;
-        try {
 
-            // verificando arquivos do diretorio de xml´s de origem
-            listFilesXmls = fileUtils.readFilesFromPath(xmlSourceDirectory, ".XML");
 
-            // percorre a lista de arquivos xmls e gera o pdf para cada um
-            for (int i = 0; i < listFilesXmls.size(); i++) {
-                String fileNameXmlBkpError = "";
+        // verificando arquivos do diretorio de xml´s de origem
+        listFilesXmls = fileUtils.readFilesFromPath(xmlSourceDirectory, XML);
 
-                try {
+        // percorre a lista de arquivos xmls e gera o pdf para cada um
+        for (int i = 0; i < listFilesXmls.size(); i++) {
+            String fileName = listFilesXmls.get(i);
+            String fileNameXmlBkpError = fileUtils.addTimestampToFileName(fileName);
 
-                    fileNameXmlBkpError = fileUtils.addTimestampToFileName(listFilesXmls.get(i));
-                    String pathFileNameXml = xmlSourceDirectory + listFilesXmls.get(i);
-                    String pathFileNameBkpXml = xmlBkpDirectory + fileNameXmlBkpError;
+            try {
+                String pathFileNameXml = xmlSourceDirectory + fileName;
+                String pathFileNameBkpXml = xmlBkpDirectory + fileNameXmlBkpError;
 
-                    File fileXml = new File(pathFileNameXml);
+                File fileXml = new File(pathFileNameXml);
 
-                    //verifica se deve gerar o pdf ou nao conforme config do properties
-                    String isImport = xmlUtils.getTagXml(fileXml, "isImportCustoms");
-                    String docTypeCode = xmlUtils.getTagXml(fileXml, "documentTypeCode");
-                    if (fileUtils.ignoreFile(docTypeCode, ignoreDocumentTypes, isImport)) {
-                        try {
-                            fileUtils.moveFile(pathFileNameXml, pathFileNameBkpXml);
-                        } catch (Exception e) {
-                            log.error("[XML_SERVICE] - Erro ao mover o arquivo {}. ERRO: {}", listFilesXmls.get(i), Throwables.getStackTraceAsString(e));
-                        }
-                        continue;
+                //verifica se deve gerar o pdf ou nao conforme config do properties
+                String isImport = xmlUtils.getTagXml(fileXml, IS_IMPORT_CUSTOMS);
+                String docTypeCode = xmlUtils.getTagXml(fileXml, DOCUMENT_TYPE_CODE);
+                if (fileUtils.ignoreFile(docTypeCode, ignoreDocumentTypes, isImport)) {
+                    fileUtils.moveFile(pathFileNameXml, pathFileNameBkpXml);
+                    continue;
+                }
+
+                //nome do arquivo destino
+                String pdfFileName = "";
+                String deliveryNumber = xmlUtils.getTagXml(fileXml, DELIVERY_NUMBER);
+                String orderNumber = xmlUtils.getTagXml(fileXml, ORDER_NUMBER);
+                String shipmentNumber = xmlUtils.getTagXml(fileXml, SHIPMENT_NUMBER);
+
+                if (!deliveryNumber.isEmpty()) {
+                    pdfFileName += deliveryNumber;
+                }
+                if (!orderNumber.isEmpty()) {
+                    if (pdfFileName.isEmpty()) {
+                        pdfFileName += orderNumber;
+                    } else {
+                        pdfFileName += "-" + orderNumber;
                     }
 
-                    //nome do arquivo destino
-                    String pdfFileName = "";
-                    String deliveryNumber = xmlUtils.getTagXml(fileXml, "deliveryNumber");
-                    String orderNumber = xmlUtils.getTagXml(fileXml, "orderNumber");
-                    String shipmentNumber = xmlUtils.getTagXml(fileXml, "shipmentNumber");
-
-                    if (!deliveryNumber.isEmpty()) {
-                        pdfFileName += deliveryNumber;
-                    }
-                    if (!orderNumber.isEmpty()) {
-                        if (pdfFileName.isEmpty()) {
-                            pdfFileName += orderNumber;
-                        } else {
-                            pdfFileName += "-" + orderNumber;
-                        }
-
-                    }
-                    if (!shipmentNumber.isEmpty()) {
-                        if (pdfFileName.isEmpty()) {
-                            pdfFileName += shipmentNumber;
-                        } else {
-                            pdfFileName += "-" + shipmentNumber;
-                        }
-                    }
-
-                    String pathFileNamePdfTarget = pdfTargetDirectory + pdfFileName + ".pdf";
-
-                    File pdf = new File(pathFileNamePdfTarget);
-
-                    String pdfBase64 = xmlUtils.getTagXml(fileXml, "content");
-
-                    pdf = pdfUtils.decodeBase64(pdf, pdfBase64);
-
-                    try {
-                        fileUtils.moveFile(pathFileNameXml, pathFileNameBkpXml);
-                    } catch (Exception e) {
-                        log.error("[XML_SERVICE] - Erro ao mover o arquivo {}. ERRO: {}", listFilesXmls.get(i), Throwables.getStackTraceAsString(e));
-                    }
-
-                } catch (Exception e) {
-                    log.error("[XML_SERVICE] - Erro ao processar arquivo {}. ERRO: {}", listFilesXmls.get(i), Throwables.getStackTraceAsString(e));
-                    try {
-                        fileUtils.moveFile(xmlSourceDirectory + listFilesXmls.get(i), xmlErrorDirectory + fileNameXmlBkpError);
-                    } catch (Exception ex) {
-                        log.error("[XML_SERVICE] - Erro ao mover o arquivo {}. ERRO: {}", listFilesXmls.get(i), Throwables.getStackTraceAsString(ex));
+                }
+                if (!shipmentNumber.isEmpty()) {
+                    if (pdfFileName.isEmpty()) {
+                        pdfFileName += shipmentNumber;
+                    } else {
+                        pdfFileName += "-" + shipmentNumber;
                     }
                 }
-            }
 
-        } catch (Exception e) {
-            log.error("[XML_SERVICE] - Erro ao ler arquivos do diretorio: {} ERRO: {}", xmlSourceDirectory, Throwables.getStackTraceAsString(e));
+                String pathFileNamePdfTarget = pdfTargetDirectory + pdfFileName + PDF;
+
+                File pdf = new File(pathFileNamePdfTarget);
+                String pdfBase64 = xmlUtils.getTagXml(fileXml, CONTENT);
+                pdfUtils.decodeBase64(pdf, pdfBase64);
+
+                fileUtils.moveFile(pathFileNameXml, pathFileNameBkpXml);
+
+
+            } catch (Exception e) {
+                log.error("[XML_SERVICE] - Erro ao processar arquivo {}. ERRO: {}", fileName, Throwables.getStackTraceAsString(e));
+                fileUtils.moveFile(xmlSourceDirectory + fileName, xmlErrorDirectory + fileNameXmlBkpError);
+            }
         }
+
 
     }
 
