@@ -5,30 +5,30 @@ import br.com.syngenta.message.MessageUtils;
 
 public class FileUtilsBusinessException extends XmlParseSyngentaBusinessException {
 
-	private static final long serialVersionUID = -894144438515373134L;
-	private MessageEnum code;
-	
-	
-	public FileUtilsBusinessException(MessageEnum messageCode,Throwable cause, Object... messageParameters) {
+    private static final long serialVersionUID = -894144438515373134L;
+    private MessageEnum code;
 
-		super(MessageUtils.getMessage(messageCode, messageParameters), cause);
 
-		this.code = messageCode;
-	}
-	
-	public FileUtilsBusinessException(MessageEnum messageCode, Object... messageParameters) {
+    public FileUtilsBusinessException(MessageEnum messageCode, Throwable cause, Object... messageParameters) {
 
-		super(MessageUtils.getMessage(messageCode, messageParameters));
+        super(MessageUtils.getMessage(messageCode, messageParameters), cause);
 
-		this.code = messageCode;
-	}
-	
-	public MessageEnum getCode() {
-		return code;
-	}
+        this.code = messageCode;
+    }
 
-	public void setCode(MessageEnum code) {
-		this.code = code;
-	}
+    public FileUtilsBusinessException(MessageEnum messageCode, Object... messageParameters) {
+
+        super(MessageUtils.getMessage(messageCode, messageParameters));
+
+        this.code = messageCode;
+    }
+
+    public MessageEnum getCode() {
+        return code;
+    }
+
+    public void setCode(MessageEnum code) {
+        this.code = code;
+    }
 
 }

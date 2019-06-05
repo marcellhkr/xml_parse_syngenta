@@ -6,55 +6,55 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 public class MessageResourceUtils {
-	
-	private static final Locale DEFAULT_LOCALE = new Locale("pt", "BR");
 
-	private MessageResourceUtils() {
-	}
+    private static final Locale DEFAULT_LOCALE = new Locale("pt", "BR");
 
-	protected static ClassLoader getCurrentClassLoader(Object defaultObject) {
+    private MessageResourceUtils() {
+    }
 
-		ClassLoader loader = Thread.currentThread().getContextClassLoader();
+    protected static ClassLoader getCurrentClassLoader(Object defaultObject) {
 
-		if (loader == null && defaultObject != null) {
-			loader = defaultObject.getClass().getClassLoader();
-		}
+        ClassLoader loader = Thread.currentThread().getContextClassLoader();
 
-		return loader;
-	}
+        if (loader == null && defaultObject != null) {
+            loader = defaultObject.getClass().getClassLoader();
+        }
 
-	public static String getMessageResource(String bundleFileName, Enum<?> messageKey, Object[] params) {
+        return loader;
+    }
 
-		return getMessageResource(bundleFileName, messageKey, params, DEFAULT_LOCALE);
-	}
+    public static String getMessageResource(String bundleFileName, Enum<?> messageKey, Object[] params) {
 
-	public static String getMessageResource(String bundleFileName, Enum<?> messageKey, Object[] params, Locale locale) {
+        return getMessageResource(bundleFileName, messageKey, params, DEFAULT_LOCALE);
+    }
 
-		String message = null;
+    public static String getMessageResource(String bundleFileName, Enum<?> messageKey, Object[] params, Locale locale) {
 
-		/* obtem o bundle de mensagens. */
-		ResourceBundle bundle = ResourceBundle.getBundle(bundleFileName, locale, getCurrentClassLoader(params));
+        String message = null;
 
-		if (bundle != null) {
-			try {
-				/* obtem texto pela chave */
-				message = messageKey.name() + " - " + bundle.getString(messageKey.name());
+        /* obtem o bundle de mensagens. */
+        ResourceBundle bundle = ResourceBundle.getBundle(bundleFileName, locale, getCurrentClassLoader(params));
 
-			} catch (MissingResourceException e) {
-				message = "?? chave " + messageKey.name() + " não encontrado ??";
-			}
+        if (bundle != null) {
+            try {
+                /* obtem texto pela chave */
+                message = messageKey.name() + " - " + bundle.getString(messageKey.name());
 
-			/* formata a mensagem com os parametros associados. */
-			if (params != null) {
-				MessageFormat mf = new MessageFormat(message, locale);
-				message = mf.format(params).toString();
-			}
-		} else {
-			message = "?? Arquivo de bundle " + bundleFileName + "não encontrado ??";
-		}
+            } catch (MissingResourceException e) {
+                message = "?? chave " + messageKey.name() + " não encontrado ??";
+            }
 
-		return message;
-	}
+            /* formata a mensagem com os parametros associados. */
+            if (params != null) {
+                MessageFormat mf = new MessageFormat(message, locale);
+                message = mf.format(params);
+            }
+        } else {
+            message = "?? Arquivo de bundle " + bundleFileName + "não encontrado ??";
+        }
+
+        return message;
+    }
 
 
 }

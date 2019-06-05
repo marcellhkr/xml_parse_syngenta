@@ -8,22 +8,17 @@
 
 package br.com.syngenta.xml.mapper;
 
+import javax.xml.bind.annotation.*;
+import javax.xml.datatype.XMLGregorianCalendar;
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.datatype.XMLGregorianCalendar;
 
 
 /**
  * <p>Classe Java de anonymous complex type.
- * 
+ *
  * <p>O seguinte fragmento do esquema especifica o conte�do esperado contido dentro desta classe.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -132,13 +127,11 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "header",
-    "documentFolderDetail"
+        "header",
+        "documentFolderDetail"
 })
 @XmlRootElement(name = "DocumentFolder")
 public class DocumentFolder {
@@ -150,11 +143,9 @@ public class DocumentFolder {
 
     /**
      * Obt�m o valor da propriedade header.
-     * 
-     * @return
-     *     possible object is
-     *     {@link DocumentFolder.Header }
-     *     
+     *
+     * @return possible object is
+     * {@link DocumentFolder.Header }
      */
     public DocumentFolder.Header getHeader() {
         return header;
@@ -162,11 +153,9 @@ public class DocumentFolder {
 
     /**
      * Define o valor da propriedade header.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link DocumentFolder.Header }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link DocumentFolder.Header }
      */
     public void setHeader(DocumentFolder.Header value) {
         this.header = value;
@@ -174,25 +163,23 @@ public class DocumentFolder {
 
     /**
      * Gets the value of the documentFolderDetail property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the documentFolderDetail property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getDocumentFolderDetail().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link DocumentFolder.DocumentFolderDetail }
-     * 
-     * 
      */
     public List<DocumentFolder.DocumentFolderDetail> getDocumentFolderDetail() {
         if (documentFolderDetail == null) {
@@ -204,9 +191,9 @@ public class DocumentFolder {
 
     /**
      * <p>Classe Java de anonymous complex type.
-     * 
+     *
      * <p>O seguinte fragmento do esquema especifica o conte�do esperado contido dentro desta classe.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -277,21 +264,19 @@ public class DocumentFolder {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
-        "documentFolderReference",
-        "subMessageId",
-        "messageFunctionCode",
-        "subscriptionEvent",
-        "deliveryNumber",
-        "orderNumber",
-        "shipmentNumber",
-        "documentFolderURL",
-        "party",
-        "document"
+            "documentFolderReference",
+            "subMessageId",
+            "messageFunctionCode",
+            "subscriptionEvent",
+            "deliveryNumber",
+            "orderNumber",
+            "shipmentNumber",
+            "documentFolderURL",
+            "party",
+            "document"
     })
     public static class DocumentFolderDetail {
 
@@ -317,11 +302,9 @@ public class DocumentFolder {
 
         /**
          * Obt�m o valor da propriedade documentFolderReference.
-         * 
-         * @return
-         *     possible object is
-         *     {@link String }
-         *     
+         *
+         * @return possible object is
+         * {@link String }
          */
         public String getDocumentFolderReference() {
             return documentFolderReference;
@@ -329,11 +312,9 @@ public class DocumentFolder {
 
         /**
          * Define o valor da propriedade documentFolderReference.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link String }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link String }
          */
         public void setDocumentFolderReference(String value) {
             this.documentFolderReference = value;
@@ -341,7 +322,6 @@ public class DocumentFolder {
 
         /**
          * Obt�m o valor da propriedade subMessageId.
-         * 
          */
         public int getSubMessageId() {
             return subMessageId;
@@ -349,7 +329,6 @@ public class DocumentFolder {
 
         /**
          * Define o valor da propriedade subMessageId.
-         * 
          */
         public void setSubMessageId(int value) {
             this.subMessageId = value;
@@ -357,11 +336,9 @@ public class DocumentFolder {
 
         /**
          * Obt�m o valor da propriedade messageFunctionCode.
-         * 
-         * @return
-         *     possible object is
-         *     {@link String }
-         *     
+         *
+         * @return possible object is
+         * {@link String }
          */
         public String getMessageFunctionCode() {
             return messageFunctionCode;
@@ -369,11 +346,9 @@ public class DocumentFolder {
 
         /**
          * Define o valor da propriedade messageFunctionCode.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link String }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link String }
          */
         public void setMessageFunctionCode(String value) {
             this.messageFunctionCode = value;
@@ -381,11 +356,9 @@ public class DocumentFolder {
 
         /**
          * Obt�m o valor da propriedade subscriptionEvent.
-         * 
-         * @return
-         *     possible object is
-         *     {@link DocumentFolder.DocumentFolderDetail.SubscriptionEvent }
-         *     
+         *
+         * @return possible object is
+         * {@link DocumentFolder.DocumentFolderDetail.SubscriptionEvent }
          */
         public DocumentFolder.DocumentFolderDetail.SubscriptionEvent getSubscriptionEvent() {
             return subscriptionEvent;
@@ -393,11 +366,9 @@ public class DocumentFolder {
 
         /**
          * Define o valor da propriedade subscriptionEvent.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link DocumentFolder.DocumentFolderDetail.SubscriptionEvent }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link DocumentFolder.DocumentFolderDetail.SubscriptionEvent }
          */
         public void setSubscriptionEvent(DocumentFolder.DocumentFolderDetail.SubscriptionEvent value) {
             this.subscriptionEvent = value;
@@ -405,25 +376,23 @@ public class DocumentFolder {
 
         /**
          * Gets the value of the deliveryNumber property.
-         * 
+         *
          * <p>
          * This accessor method returns a reference to the live list,
          * not a snapshot. Therefore any modification you make to the
          * returned list will be present inside the JAXB object.
          * This is why there is not a <CODE>set</CODE> method for the deliveryNumber property.
-         * 
+         *
          * <p>
          * For example, to add a new item, do as follows:
          * <pre>
          *    getDeliveryNumber().add(newItem);
          * </pre>
-         * 
-         * 
+         *
+         *
          * <p>
          * Objects of the following type(s) are allowed in the list
          * {@link String }
-         * 
-         * 
          */
         public List<String> getDeliveryNumber() {
             if (deliveryNumber == null) {
@@ -434,25 +403,23 @@ public class DocumentFolder {
 
         /**
          * Gets the value of the orderNumber property.
-         * 
+         *
          * <p>
          * This accessor method returns a reference to the live list,
          * not a snapshot. Therefore any modification you make to the
          * returned list will be present inside the JAXB object.
          * This is why there is not a <CODE>set</CODE> method for the orderNumber property.
-         * 
+         *
          * <p>
          * For example, to add a new item, do as follows:
          * <pre>
          *    getOrderNumber().add(newItem);
          * </pre>
-         * 
-         * 
+         *
+         *
          * <p>
          * Objects of the following type(s) are allowed in the list
          * {@link String }
-         * 
-         * 
          */
         public List<String> getOrderNumber() {
             if (orderNumber == null) {
@@ -463,25 +430,23 @@ public class DocumentFolder {
 
         /**
          * Gets the value of the shipmentNumber property.
-         * 
+         *
          * <p>
          * This accessor method returns a reference to the live list,
          * not a snapshot. Therefore any modification you make to the
          * returned list will be present inside the JAXB object.
          * This is why there is not a <CODE>set</CODE> method for the shipmentNumber property.
-         * 
+         *
          * <p>
          * For example, to add a new item, do as follows:
          * <pre>
          *    getShipmentNumber().add(newItem);
          * </pre>
-         * 
-         * 
+         *
+         *
          * <p>
          * Objects of the following type(s) are allowed in the list
          * {@link String }
-         * 
-         * 
          */
         public List<String> getShipmentNumber() {
             if (shipmentNumber == null) {
@@ -492,11 +457,9 @@ public class DocumentFolder {
 
         /**
          * Obt�m o valor da propriedade documentFolderURL.
-         * 
-         * @return
-         *     possible object is
-         *     {@link String }
-         *     
+         *
+         * @return possible object is
+         * {@link String }
          */
         public String getDocumentFolderURL() {
             return documentFolderURL;
@@ -504,11 +467,9 @@ public class DocumentFolder {
 
         /**
          * Define o valor da propriedade documentFolderURL.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link String }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link String }
          */
         public void setDocumentFolderURL(String value) {
             this.documentFolderURL = value;
@@ -516,25 +477,23 @@ public class DocumentFolder {
 
         /**
          * Gets the value of the party property.
-         * 
+         *
          * <p>
          * This accessor method returns a reference to the live list,
          * not a snapshot. Therefore any modification you make to the
          * returned list will be present inside the JAXB object.
          * This is why there is not a <CODE>set</CODE> method for the party property.
-         * 
+         *
          * <p>
          * For example, to add a new item, do as follows:
          * <pre>
          *    getParty().add(newItem);
          * </pre>
-         * 
-         * 
+         *
+         *
          * <p>
          * Objects of the following type(s) are allowed in the list
          * {@link DocumentFolder.DocumentFolderDetail.Party }
-         * 
-         * 
          */
         public List<DocumentFolder.DocumentFolderDetail.Party> getParty() {
             if (party == null) {
@@ -545,11 +504,9 @@ public class DocumentFolder {
 
         /**
          * Obt�m o valor da propriedade document.
-         * 
-         * @return
-         *     possible object is
-         *     {@link DocumentFolder.DocumentFolderDetail.Document }
-         *     
+         *
+         * @return possible object is
+         * {@link DocumentFolder.DocumentFolderDetail.Document }
          */
         public DocumentFolder.DocumentFolderDetail.Document getDocument() {
             return document;
@@ -557,11 +514,9 @@ public class DocumentFolder {
 
         /**
          * Define o valor da propriedade document.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link DocumentFolder.DocumentFolderDetail.Document }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link DocumentFolder.DocumentFolderDetail.Document }
          */
         public void setDocument(DocumentFolder.DocumentFolderDetail.Document value) {
             this.document = value;
@@ -570,9 +525,9 @@ public class DocumentFolder {
 
         /**
          * <p>Classe Java de anonymous complex type.
-         * 
+         *
          * <p>O seguinte fragmento do esquema especifica o conte�do esperado contido dentro desta classe.
-         * 
+         *
          * <pre>
          * &lt;complexType>
          *   &lt;complexContent>
@@ -589,17 +544,15 @@ public class DocumentFolder {
          *   &lt;/complexContent>
          * &lt;/complexType>
          * </pre>
-         * 
-         * 
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "", propOrder = {
-            "revisionNumber",
-            "name",
-            "encodingCode",
-            "mimeType",
-            "documentTypeCode",
-            "content"
+                "revisionNumber",
+                "name",
+                "encodingCode",
+                "mimeType",
+                "documentTypeCode",
+                "content"
         })
         public static class Document {
 
@@ -617,7 +570,6 @@ public class DocumentFolder {
 
             /**
              * Obt�m o valor da propriedade revisionNumber.
-             * 
              */
             public int getRevisionNumber() {
                 return revisionNumber;
@@ -625,7 +577,6 @@ public class DocumentFolder {
 
             /**
              * Define o valor da propriedade revisionNumber.
-             * 
              */
             public void setRevisionNumber(int value) {
                 this.revisionNumber = value;
@@ -633,11 +584,9 @@ public class DocumentFolder {
 
             /**
              * Obt�m o valor da propriedade name.
-             * 
-             * @return
-             *     possible object is
-             *     {@link String }
-             *     
+             *
+             * @return possible object is
+             * {@link String }
              */
             public String getName() {
                 return name;
@@ -645,11 +594,9 @@ public class DocumentFolder {
 
             /**
              * Define o valor da propriedade name.
-             * 
-             * @param value
-             *     allowed object is
-             *     {@link String }
-             *     
+             *
+             * @param value allowed object is
+             *              {@link String }
              */
             public void setName(String value) {
                 this.name = value;
@@ -657,11 +604,9 @@ public class DocumentFolder {
 
             /**
              * Obt�m o valor da propriedade encodingCode.
-             * 
-             * @return
-             *     possible object is
-             *     {@link String }
-             *     
+             *
+             * @return possible object is
+             * {@link String }
              */
             public String getEncodingCode() {
                 return encodingCode;
@@ -669,11 +614,9 @@ public class DocumentFolder {
 
             /**
              * Define o valor da propriedade encodingCode.
-             * 
-             * @param value
-             *     allowed object is
-             *     {@link String }
-             *     
+             *
+             * @param value allowed object is
+             *              {@link String }
              */
             public void setEncodingCode(String value) {
                 this.encodingCode = value;
@@ -681,11 +624,9 @@ public class DocumentFolder {
 
             /**
              * Obt�m o valor da propriedade mimeType.
-             * 
-             * @return
-             *     possible object is
-             *     {@link String }
-             *     
+             *
+             * @return possible object is
+             * {@link String }
              */
             public String getMimeType() {
                 return mimeType;
@@ -693,11 +634,9 @@ public class DocumentFolder {
 
             /**
              * Define o valor da propriedade mimeType.
-             * 
-             * @param value
-             *     allowed object is
-             *     {@link String }
-             *     
+             *
+             * @param value allowed object is
+             *              {@link String }
              */
             public void setMimeType(String value) {
                 this.mimeType = value;
@@ -705,11 +644,9 @@ public class DocumentFolder {
 
             /**
              * Obt�m o valor da propriedade documentTypeCode.
-             * 
-             * @return
-             *     possible object is
-             *     {@link String }
-             *     
+             *
+             * @return possible object is
+             * {@link String }
              */
             public String getDocumentTypeCode() {
                 return documentTypeCode;
@@ -717,11 +654,9 @@ public class DocumentFolder {
 
             /**
              * Define o valor da propriedade documentTypeCode.
-             * 
-             * @param value
-             *     allowed object is
-             *     {@link String }
-             *     
+             *
+             * @param value allowed object is
+             *              {@link String }
              */
             public void setDocumentTypeCode(String value) {
                 this.documentTypeCode = value;
@@ -729,11 +664,9 @@ public class DocumentFolder {
 
             /**
              * Obt�m o valor da propriedade content.
-             * 
-             * @return
-             *     possible object is
-             *     {@link String }
-             *     
+             *
+             * @return possible object is
+             * {@link String }
              */
             public String getContent() {
                 return content;
@@ -741,11 +674,9 @@ public class DocumentFolder {
 
             /**
              * Define o valor da propriedade content.
-             * 
-             * @param value
-             *     allowed object is
-             *     {@link String }
-             *     
+             *
+             * @param value allowed object is
+             *              {@link String }
              */
             public void setContent(String value) {
                 this.content = value;
@@ -756,9 +687,9 @@ public class DocumentFolder {
 
         /**
          * <p>Classe Java de anonymous complex type.
-         * 
+         *
          * <p>O seguinte fragmento do esquema especifica o conte�do esperado contido dentro desta classe.
-         * 
+         *
          * <pre>
          * &lt;complexType>
          *   &lt;complexContent>
@@ -782,13 +713,11 @@ public class DocumentFolder {
          *   &lt;/complexContent>
          * &lt;/complexType>
          * </pre>
-         * 
-         * 
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "", propOrder = {
-            "partyRoleCode",
-            "identification"
+                "partyRoleCode",
+                "identification"
         })
         public static class Party {
 
@@ -799,11 +728,9 @@ public class DocumentFolder {
 
             /**
              * Obt�m o valor da propriedade partyRoleCode.
-             * 
-             * @return
-             *     possible object is
-             *     {@link String }
-             *     
+             *
+             * @return possible object is
+             * {@link String }
              */
             public String getPartyRoleCode() {
                 return partyRoleCode;
@@ -811,11 +738,9 @@ public class DocumentFolder {
 
             /**
              * Define o valor da propriedade partyRoleCode.
-             * 
-             * @param value
-             *     allowed object is
-             *     {@link String }
-             *     
+             *
+             * @param value allowed object is
+             *              {@link String }
              */
             public void setPartyRoleCode(String value) {
                 this.partyRoleCode = value;
@@ -823,11 +748,9 @@ public class DocumentFolder {
 
             /**
              * Obt�m o valor da propriedade identification.
-             * 
-             * @return
-             *     possible object is
-             *     {@link DocumentFolder.DocumentFolderDetail.Party.Identification }
-             *     
+             *
+             * @return possible object is
+             * {@link DocumentFolder.DocumentFolderDetail.Party.Identification }
              */
             public DocumentFolder.DocumentFolderDetail.Party.Identification getIdentification() {
                 return identification;
@@ -835,11 +758,9 @@ public class DocumentFolder {
 
             /**
              * Define o valor da propriedade identification.
-             * 
-             * @param value
-             *     allowed object is
-             *     {@link DocumentFolder.DocumentFolderDetail.Party.Identification }
-             *     
+             *
+             * @param value allowed object is
+             *              {@link DocumentFolder.DocumentFolderDetail.Party.Identification }
              */
             public void setIdentification(DocumentFolder.DocumentFolderDetail.Party.Identification value) {
                 this.identification = value;
@@ -848,9 +769,9 @@ public class DocumentFolder {
 
             /**
              * <p>Classe Java de anonymous complex type.
-             * 
+             *
              * <p>O seguinte fragmento do esquema especifica o conte�do esperado contido dentro desta classe.
-             * 
+             *
              * <pre>
              * &lt;complexType>
              *   &lt;complexContent>
@@ -863,13 +784,11 @@ public class DocumentFolder {
              *   &lt;/complexContent>
              * &lt;/complexType>
              * </pre>
-             * 
-             * 
              */
             @XmlAccessorType(XmlAccessType.FIELD)
             @XmlType(name = "", propOrder = {
-                "type",
-                "value"
+                    "type",
+                    "value"
             })
             public static class Identification {
 
@@ -880,11 +799,9 @@ public class DocumentFolder {
 
                 /**
                  * Obt�m o valor da propriedade type.
-                 * 
-                 * @return
-                 *     possible object is
-                 *     {@link String }
-                 *     
+                 *
+                 * @return possible object is
+                 * {@link String }
                  */
                 public String getType() {
                     return type;
@@ -892,11 +809,9 @@ public class DocumentFolder {
 
                 /**
                  * Define o valor da propriedade type.
-                 * 
-                 * @param value
-                 *     allowed object is
-                 *     {@link String }
-                 *     
+                 *
+                 * @param value allowed object is
+                 *              {@link String }
                  */
                 public void setType(String value) {
                     this.type = value;
@@ -904,11 +819,9 @@ public class DocumentFolder {
 
                 /**
                  * Obt�m o valor da propriedade value.
-                 * 
-                 * @return
-                 *     possible object is
-                 *     {@link String }
-                 *     
+                 *
+                 * @return possible object is
+                 * {@link String }
                  */
                 public String getValue() {
                     return value;
@@ -916,11 +829,9 @@ public class DocumentFolder {
 
                 /**
                  * Define o valor da propriedade value.
-                 * 
-                 * @param value
-                 *     allowed object is
-                 *     {@link String }
-                 *     
+                 *
+                 * @param value allowed object is
+                 *              {@link String }
                  */
                 public void setValue(String value) {
                     this.value = value;
@@ -933,9 +844,9 @@ public class DocumentFolder {
 
         /**
          * <p>Classe Java de anonymous complex type.
-         * 
+         *
          * <p>O seguinte fragmento do esquema especifica o conte�do esperado contido dentro desta classe.
-         * 
+         *
          * <pre>
          * &lt;complexType>
          *   &lt;complexContent>
@@ -950,15 +861,13 @@ public class DocumentFolder {
          *   &lt;/complexContent>
          * &lt;/complexType>
          * </pre>
-         * 
-         * 
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "", propOrder = {
-            "eventTypeCode",
-            "eventRoleCode",
-            "eventDate",
-            "eventDateTime"
+                "eventTypeCode",
+                "eventRoleCode",
+                "eventDate",
+                "eventDateTime"
         })
         public static class SubscriptionEvent {
 
@@ -975,11 +884,9 @@ public class DocumentFolder {
 
             /**
              * Obt�m o valor da propriedade eventTypeCode.
-             * 
-             * @return
-             *     possible object is
-             *     {@link String }
-             *     
+             *
+             * @return possible object is
+             * {@link String }
              */
             public String getEventTypeCode() {
                 return eventTypeCode;
@@ -987,11 +894,9 @@ public class DocumentFolder {
 
             /**
              * Define o valor da propriedade eventTypeCode.
-             * 
-             * @param value
-             *     allowed object is
-             *     {@link String }
-             *     
+             *
+             * @param value allowed object is
+             *              {@link String }
              */
             public void setEventTypeCode(String value) {
                 this.eventTypeCode = value;
@@ -999,11 +904,9 @@ public class DocumentFolder {
 
             /**
              * Obt�m o valor da propriedade eventRoleCode.
-             * 
-             * @return
-             *     possible object is
-             *     {@link String }
-             *     
+             *
+             * @return possible object is
+             * {@link String }
              */
             public String getEventRoleCode() {
                 return eventRoleCode;
@@ -1011,11 +914,9 @@ public class DocumentFolder {
 
             /**
              * Define o valor da propriedade eventRoleCode.
-             * 
-             * @param value
-             *     allowed object is
-             *     {@link String }
-             *     
+             *
+             * @param value allowed object is
+             *              {@link String }
              */
             public void setEventRoleCode(String value) {
                 this.eventRoleCode = value;
@@ -1023,11 +924,9 @@ public class DocumentFolder {
 
             /**
              * Obt�m o valor da propriedade eventDate.
-             * 
-             * @return
-             *     possible object is
-             *     {@link XMLGregorianCalendar }
-             *     
+             *
+             * @return possible object is
+             * {@link XMLGregorianCalendar }
              */
             public XMLGregorianCalendar getEventDate() {
                 return eventDate;
@@ -1035,11 +934,9 @@ public class DocumentFolder {
 
             /**
              * Define o valor da propriedade eventDate.
-             * 
-             * @param value
-             *     allowed object is
-             *     {@link XMLGregorianCalendar }
-             *     
+             *
+             * @param value allowed object is
+             *              {@link XMLGregorianCalendar }
              */
             public void setEventDate(XMLGregorianCalendar value) {
                 this.eventDate = value;
@@ -1047,11 +944,9 @@ public class DocumentFolder {
 
             /**
              * Obt�m o valor da propriedade eventDateTime.
-             * 
-             * @return
-             *     possible object is
-             *     {@link XMLGregorianCalendar }
-             *     
+             *
+             * @return possible object is
+             * {@link XMLGregorianCalendar }
              */
             public XMLGregorianCalendar getEventDateTime() {
                 return eventDateTime;
@@ -1059,11 +954,9 @@ public class DocumentFolder {
 
             /**
              * Define o valor da propriedade eventDateTime.
-             * 
-             * @param value
-             *     allowed object is
-             *     {@link XMLGregorianCalendar }
-             *     
+             *
+             * @param value allowed object is
+             *              {@link XMLGregorianCalendar }
              */
             public void setEventDateTime(XMLGregorianCalendar value) {
                 this.eventDateTime = value;
@@ -1076,9 +969,9 @@ public class DocumentFolder {
 
     /**
      * <p>Classe Java de anonymous complex type.
-     * 
+     *
      * <p>O seguinte fragmento do esquema especifica o conte�do esperado contido dentro desta classe.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -1107,18 +1000,16 @@ public class DocumentFolder {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
-        "version",
-        "documentType",
-        "messageId",
-        "senderId",
-        "receiverId",
-        "count",
-        "functionalAcknowledgementRequest"
+            "version",
+            "documentType",
+            "messageId",
+            "senderId",
+            "receiverId",
+            "count",
+            "functionalAcknowledgementRequest"
     })
     public static class Header {
 
@@ -1136,7 +1027,6 @@ public class DocumentFolder {
 
         /**
          * Obt�m o valor da propriedade version.
-         * 
          */
         public int getVersion() {
             return version;
@@ -1144,7 +1034,6 @@ public class DocumentFolder {
 
         /**
          * Define o valor da propriedade version.
-         * 
          */
         public void setVersion(int value) {
             this.version = value;
@@ -1152,11 +1041,9 @@ public class DocumentFolder {
 
         /**
          * Obt�m o valor da propriedade documentType.
-         * 
-         * @return
-         *     possible object is
-         *     {@link String }
-         *     
+         *
+         * @return possible object is
+         * {@link String }
          */
         public String getDocumentType() {
             return documentType;
@@ -1164,11 +1051,9 @@ public class DocumentFolder {
 
         /**
          * Define o valor da propriedade documentType.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link String }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link String }
          */
         public void setDocumentType(String value) {
             this.documentType = value;
@@ -1176,7 +1061,6 @@ public class DocumentFolder {
 
         /**
          * Obt�m o valor da propriedade messageId.
-         * 
          */
         public int getMessageId() {
             return messageId;
@@ -1184,7 +1068,6 @@ public class DocumentFolder {
 
         /**
          * Define o valor da propriedade messageId.
-         * 
          */
         public void setMessageId(int value) {
             this.messageId = value;
@@ -1192,11 +1075,9 @@ public class DocumentFolder {
 
         /**
          * Obt�m o valor da propriedade senderId.
-         * 
-         * @return
-         *     possible object is
-         *     {@link String }
-         *     
+         *
+         * @return possible object is
+         * {@link String }
          */
         public String getSenderId() {
             return senderId;
@@ -1204,11 +1085,9 @@ public class DocumentFolder {
 
         /**
          * Define o valor da propriedade senderId.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link String }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link String }
          */
         public void setSenderId(String value) {
             this.senderId = value;
@@ -1216,11 +1095,9 @@ public class DocumentFolder {
 
         /**
          * Obt�m o valor da propriedade receiverId.
-         * 
-         * @return
-         *     possible object is
-         *     {@link String }
-         *     
+         *
+         * @return possible object is
+         * {@link String }
          */
         public String getReceiverId() {
             return receiverId;
@@ -1228,11 +1105,9 @@ public class DocumentFolder {
 
         /**
          * Define o valor da propriedade receiverId.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link String }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link String }
          */
         public void setReceiverId(String value) {
             this.receiverId = value;
@@ -1240,7 +1115,6 @@ public class DocumentFolder {
 
         /**
          * Obt�m o valor da propriedade count.
-         * 
          */
         public int getCount() {
             return count;
@@ -1248,7 +1122,6 @@ public class DocumentFolder {
 
         /**
          * Define o valor da propriedade count.
-         * 
          */
         public void setCount(int value) {
             this.count = value;
@@ -1256,11 +1129,9 @@ public class DocumentFolder {
 
         /**
          * Obt�m o valor da propriedade functionalAcknowledgementRequest.
-         * 
-         * @return
-         *     possible object is
-         *     {@link DocumentFolder.Header.FunctionalAcknowledgementRequest }
-         *     
+         *
+         * @return possible object is
+         * {@link DocumentFolder.Header.FunctionalAcknowledgementRequest }
          */
         public DocumentFolder.Header.FunctionalAcknowledgementRequest getFunctionalAcknowledgementRequest() {
             return functionalAcknowledgementRequest;
@@ -1268,11 +1139,9 @@ public class DocumentFolder {
 
         /**
          * Define o valor da propriedade functionalAcknowledgementRequest.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link DocumentFolder.Header.FunctionalAcknowledgementRequest }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link DocumentFolder.Header.FunctionalAcknowledgementRequest }
          */
         public void setFunctionalAcknowledgementRequest(DocumentFolder.Header.FunctionalAcknowledgementRequest value) {
             this.functionalAcknowledgementRequest = value;
@@ -1281,9 +1150,9 @@ public class DocumentFolder {
 
         /**
          * <p>Classe Java de anonymous complex type.
-         * 
+         *
          * <p>O seguinte fragmento do esquema especifica o conte�do esperado contido dentro desta classe.
-         * 
+         *
          * <pre>
          * &lt;complexType>
          *   &lt;complexContent>
@@ -1296,13 +1165,11 @@ public class DocumentFolder {
          *   &lt;/complexContent>
          * &lt;/complexType>
          * </pre>
-         * 
-         * 
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "", propOrder = {
-            "functionalAcknowledgeRequestTypeCode",
-            "isIncludeOriginalMessage"
+                "functionalAcknowledgeRequestTypeCode",
+                "isIncludeOriginalMessage"
         })
         public static class FunctionalAcknowledgementRequest {
 
@@ -1313,11 +1180,9 @@ public class DocumentFolder {
 
             /**
              * Obt�m o valor da propriedade functionalAcknowledgeRequestTypeCode.
-             * 
-             * @return
-             *     possible object is
-             *     {@link String }
-             *     
+             *
+             * @return possible object is
+             * {@link String }
              */
             public String getFunctionalAcknowledgeRequestTypeCode() {
                 return functionalAcknowledgeRequestTypeCode;
@@ -1325,11 +1190,9 @@ public class DocumentFolder {
 
             /**
              * Define o valor da propriedade functionalAcknowledgeRequestTypeCode.
-             * 
-             * @param value
-             *     allowed object is
-             *     {@link String }
-             *     
+             *
+             * @param value allowed object is
+             *              {@link String }
              */
             public void setFunctionalAcknowledgeRequestTypeCode(String value) {
                 this.functionalAcknowledgeRequestTypeCode = value;
@@ -1337,11 +1200,9 @@ public class DocumentFolder {
 
             /**
              * Obt�m o valor da propriedade isIncludeOriginalMessage.
-             * 
-             * @return
-             *     possible object is
-             *     {@link String }
-             *     
+             *
+             * @return possible object is
+             * {@link String }
              */
             public String getIsIncludeOriginalMessage() {
                 return isIncludeOriginalMessage;
@@ -1349,11 +1210,9 @@ public class DocumentFolder {
 
             /**
              * Define o valor da propriedade isIncludeOriginalMessage.
-             * 
-             * @param value
-             *     allowed object is
-             *     {@link String }
-             *     
+             *
+             * @param value allowed object is
+             *              {@link String }
              */
             public void setIsIncludeOriginalMessage(String value) {
                 this.isIncludeOriginalMessage = value;
