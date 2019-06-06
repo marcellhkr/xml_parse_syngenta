@@ -2,12 +2,16 @@ package br.com.syngenta.service;
 
 import br.com.syngenta.util.FileUtils;
 import br.com.syngenta.util.PDFUtils;
+import br.com.syngenta.util.SftpUtil;
 import br.com.syngenta.util.XMLUtils;
 import br.com.syngenta.xml.mapper.DocumentFolder;
 import br.com.syngenta.xml.mapper.DocumentFolder.DocumentFolderDetail;
 import br.com.syngenta.xml.mapper.DocumentFolder.DocumentFolderDetail.Document;
 import br.com.syngenta.xml.mapper.DocumentFolder.Header;
 import com.google.common.base.Throwables;
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.ChannelSftp.LsEntry;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Vector;
 
 @Service
 public class PdfParseSyngentaService {
@@ -29,6 +34,9 @@ public class PdfParseSyngentaService {
 
     @Autowired
     FileUtils fileUtils;
+    
+    @Autowired
+    SftpUtil sftpUtil;
 
     @Value("${property.pdf.source.directory}")
     String pdfSourceDirectory;
@@ -41,6 +49,24 @@ public class PdfParseSyngentaService {
 
     @Value("${property.pdf.xml.target.directory}")
     String xmlTargetDirectory;
+    
+    @Value("${property.config.source.target.xml}")
+    String configSourceXml;
+    
+    @Value("${property.host.sftp}")
+    String sftpHost;
+    
+    @Value("${property.port.sftp}")
+    int sftpPort;
+    
+    @Value("${property.user.sftp}")
+    String sftpUser;
+    
+    @Value("${property.pass.sftp}")
+    String sftpPassword;
+    
+    @Value("${property.workingdir.sftp.out}")
+    String sftpWorkingDir;
 
     public void runService() {
 
@@ -75,7 +101,18 @@ public class PdfParseSyngentaService {
                 //gera o arquivo
                 xmlUtils.jaxbObjectToXML(xmlFinal, xmlTargetDirectory + fileName);
 
+                if (configSourceXml.equals("sftp")) {
+                	try {
+                		ChannelSftp channelSftp = sftpUtil.connectSftp(sftpHost, sftpPort, sftpUser, sftpPassword);
+                		sftpUtil.putFileSftp(channelSftp, xmlTargetDirectory + fileName, sftpWorkingDir);
+                		channelSftp.disconnect();                		
+                	} catch (Exception e) {
+                		log.error(Throwables.getStackTraceAsString(e));
+                	}
+                } 
+                
                 fileUtils.moveFile(pathFileNamePdf, pathFileNameBkpPdf);
+                
 
             } catch (Exception e) {
                 log.error("[PDF_SERVICE] - Erro ao processar arquivo {}. ERRO: {}", file, Throwables.getStackTraceAsString(e));

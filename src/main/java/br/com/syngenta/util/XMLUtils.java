@@ -12,6 +12,8 @@ import org.springframework.stereotype.Component;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import com.google.common.base.Throwables;
+
 import javax.xml.bind.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -71,7 +73,7 @@ public class XMLUtils extends DocumentFolder {
         }
     }
 
-    public DocumentFolderDetail createDocumentFolderDrtailParty( String partyRole, String type, String value) {
+    public Party createDocumentFolderDetailParty( String partyRole, String type, String value) {
         log.debug("[PDFUtils] - Criando no xml <party> -> Party Role: {}, type: {}, Value: {}", partyRole, type, value);
 
         Party party = new Party();
@@ -86,7 +88,7 @@ public class XMLUtils extends DocumentFolder {
         DocumentFolderDetail docDetail = new DocumentFolderDetail();
         docDetail.getParty().add(party);
 
-        return docDetail;
+        return party;
     }
 
     public DocumentFolderDetail createDocumentFolderDetail(String delivery, String orderNumber, Document doc) throws Exception {
@@ -98,8 +100,8 @@ public class XMLUtils extends DocumentFolder {
         dfDetail.getOrderNumber().add(orderNumber);
         dfDetail.setDocument(doc);
         // Document Folder Party - DocumentProvider/DocumentOwner
-        createDocumentFolderDrtailParty( "DocumentProvider", "DOC_PROVIDER_ID", "OSGT");
-        createDocumentFolderDrtailParty( "DocumentOwner", "DOC_OWNER_ID", "SYNGENTA");
+        dfDetail.getParty().add(createDocumentFolderDetailParty( "DocumentProvider", "DOC_PROVIDER_ID", "OSGT"));
+        dfDetail.getParty().add(createDocumentFolderDetailParty( "DocumentOwner", "DOC_OWNER_ID", "SYNGENTA"));
 
         log.debug("[PDFUtils] - Fim criando no xml <CurrentFolderDetail>: delivery: {}, orderNumber: {}", delivery, orderNumber);
         return dfDetail;
@@ -156,11 +158,11 @@ public class XMLUtils extends DocumentFolder {
             DocumentBuilder db = dbf.newDocumentBuilder();
             org.w3c.dom.Document doc = db.parse(is);
 
-            String pdfBase64 = doc.getElementsByTagName(tag).item(0).getTextContent();
+            String tagXml = doc.getElementsByTagName(tag).item(0).getTextContent();
 
-            return pdfBase64;
-        } catch (ParserConfigurationException | SAXException | IOException e) {
-            log.error(e);
+            return tagXml;
+        } catch (ParserConfigurationException | SAXException | NullPointerException| IOException e) {
+            log.error(Throwables.getStackTraceAsString(e));
         }
         return "";
     }

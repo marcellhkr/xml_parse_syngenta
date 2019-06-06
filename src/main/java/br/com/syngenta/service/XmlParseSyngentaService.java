@@ -2,8 +2,12 @@ package br.com.syngenta.service;
 
 import br.com.syngenta.util.FileUtils;
 import br.com.syngenta.util.PDFUtils;
+import br.com.syngenta.util.SftpUtil;
 import br.com.syngenta.util.XMLUtils;
 import com.google.common.base.Throwables;
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.ChannelSftp.LsEntry;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.List;
+import java.util.Vector;
 
 @Service
 public class XmlParseSyngentaService {
@@ -34,6 +39,9 @@ public class XmlParseSyngentaService {
 
     @Autowired
     FileUtils fileUtils;
+    
+    @Autowired
+    SftpUtil sftpUtil;
 
     @Value("${property.xml.source.directory}")
     String xmlSourceDirectory;
@@ -49,12 +57,48 @@ public class XmlParseSyngentaService {
 
     @Value("${property.json.ignore.document.type}")
     String ignoreDocumentTypes;
+    
+    @Value("${property.config.source.target.xml}")
+    String configSourceXml;
+    
+    @Value("${property.host.sftp}")
+    String sftpHost;
+    
+    @Value("${property.port.sftp}")
+    int sftpPort;
+    
+    @Value("${property.user.sftp}")
+    String sftpUser;
+    
+    @Value("${property.pass.sftp}")
+    String sftpPassword;
+    
+    @Value("${property.workingdir.sftp.in}")
+    String sftpWorkingDir;
 
     public void runService() {
 
 
         List<String> listFilesXmls = null;
-
+        
+        if (configSourceXml.equals("sftp")) {
+        	try {
+        		ChannelSftp channelSftp = sftpUtil.connectSftp(sftpHost, sftpPort, sftpUser, sftpPassword);
+        		Vector<LsEntry> listFiles = sftpUtil.listFilesSftp(channelSftp, sftpWorkingDir);
+        		listFiles.forEach(x -> {
+					try {
+						sftpUtil.getFileSftp(channelSftp, x.getFilename(), xmlSourceDirectory);
+					} catch (Exception e) {
+						log.error(Throwables.getStackTraceAsString(e));
+					}
+				});
+        		channelSftp.disconnect();
+        		
+        	} catch (Exception e) {
+        		log.error(Throwables.getStackTraceAsString(e));
+        	}
+        	
+        }
 
         // verificando arquivos do diretorio de xml´s de origem
         listFilesXmls = fileUtils.readFilesFromPath(xmlSourceDirectory, XML);

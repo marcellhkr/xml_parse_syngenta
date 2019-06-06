@@ -2,7 +2,6 @@ package br.com.syngenta.util;
 
 import br.com.syngenta.exception.BusinessException;
 import br.com.syngenta.message.MessageEnum;
-import com.google.common.base.Throwables;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
