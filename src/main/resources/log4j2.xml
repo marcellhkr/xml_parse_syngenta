@@ -4,7 +4,7 @@
     <!-- Logging Properties -->
     <Properties>
         <Property name="LOG_PATTERN">%d{yyyy-MM-dd'T'HH:mm:ss.SSSZ} %p %m%n</Property>
-        <Property name="APP_LOG_ROOT">C:/Users/mateus.santilli/Desktop/MATEUS/Pessoal/Projetos/Syngenta/dirs/log</Property>
+        <Property name="APP_LOG_ROOT">.\logs</Property>
     </Properties>
      
     <Appenders>

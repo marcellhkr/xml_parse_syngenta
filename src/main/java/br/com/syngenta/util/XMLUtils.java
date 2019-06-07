@@ -35,7 +35,7 @@ public class XMLUtils extends DocumentFolder {
 
     //PDF para o XML
     public void jaxbObjectToXML(DocumentFolder documentFolder, String fileName) throws BusinessException{
-        log.debug("[PDFUtils] - Iniciando geracao do arquivo XML: {}", fileName);
+        log.debug("[XMLUtils] - Iniciando geracao do arquivo XML: {}", fileName);
 
         try {
             JAXBContext jaxbContext = JAXBContext.newInstance(DocumentFolder.class);
@@ -46,17 +46,17 @@ public class XMLUtils extends DocumentFolder {
 
             OutputStream os = new FileOutputStream(fileName);
             jaxbMarshaller.marshal(documentFolder, os);
+            os.close();
+            log.debug("[XMLUtils] - Fim da geracao do arquivo XML: {}", fileName);
 
-            log.debug("[PDFUtils] - Fim da geracao do arquivo XML: {}", fileName);
-
-        } catch (FileNotFoundException | JAXBException  e) {
+        } catch (JAXBException | IOException  e) {
             throw  new BusinessException(MessageEnum.XML_UTILS_ERROR_001, e);
         }
     }
 
     //XML para PDF
     public DocumentFolder xmlToJaxbObject(File file) throws Exception {
-        log.debug("[PDFUtils] - Carregando arquivo {} XML", file.getName());
+        log.debug("[XMLUtils] - Carregando arquivo {} XML", file.getName());
 
         DocumentFolder documentFolder = null;
         try {
@@ -65,7 +65,7 @@ public class XMLUtils extends DocumentFolder {
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
             documentFolder = (DocumentFolder) jaxbUnmarshaller.unmarshal(file);
 
-            log.debug("[PDFUtils] - Fim carregando arquivo {} XML", file.getName());
+            log.debug("[XMLUtils] - Fim carregando arquivo {} XML", file.getName());
             return documentFolder;
 
         } catch (JAXBException e) {
@@ -74,7 +74,7 @@ public class XMLUtils extends DocumentFolder {
     }
 
     public Party createDocumentFolderDetailParty( String partyRole, String type, String value) {
-        log.debug("[PDFUtils] - Criando no xml <party> -> Party Role: {}, type: {}, Value: {}", partyRole, type, value);
+        log.debug("[XMLUtils] - Criando no xml <party> -> Party Role: {}, type: {}, Value: {}", partyRole, type, value);
 
         Party party = new Party();
         party.setPartyRoleCode(partyRole);
@@ -92,7 +92,7 @@ public class XMLUtils extends DocumentFolder {
     }
 
     public DocumentFolderDetail createDocumentFolderDetail(String delivery, String orderNumber, Document doc) throws Exception {
-        log.debug("[PDFUtils] - Criando no xml <CurrentFolderDetail>: delivery: {}, orderNumber: {}", delivery, orderNumber);
+        log.debug("[XMLUtils] - Criando no xml <CurrentFolderDetail>: delivery: {}, orderNumber: {}", delivery, orderNumber);
 
         DocumentFolderDetail dfDetail = new DocumentFolderDetail();
         dfDetail.setMessageFunctionCode(messageFunctionCodeXml);
@@ -103,12 +103,12 @@ public class XMLUtils extends DocumentFolder {
         dfDetail.getParty().add(createDocumentFolderDetailParty( "DocumentProvider", "DOC_PROVIDER_ID", "OSGT"));
         dfDetail.getParty().add(createDocumentFolderDetailParty( "DocumentOwner", "DOC_OWNER_ID", "SYNGENTA"));
 
-        log.debug("[PDFUtils] - Fim criando no xml <CurrentFolderDetail>: delivery: {}, orderNumber: {}", delivery, orderNumber);
+        log.debug("[XMLUtils] - Fim criando no xml <CurrentFolderDetail>: delivery: {}, orderNumber: {}", delivery, orderNumber);
         return dfDetail;
     }
 
     public Header createDocumentFolderHeader() {
-        log.debug("[PDFUtils] - Criando no xml <header>");
+        log.debug("[XMLUtils] - Criando no xml <header>");
 
         Header dfHeader = new Header();
         dfHeader.setVersion(versionXml);
@@ -119,7 +119,7 @@ public class XMLUtils extends DocumentFolder {
     }
 
     public Document createDocument(String pdfBase64, String fileName) throws Exception {
-        log.debug("[PDFUtils] - Criando no xml <document>");
+        log.debug("[XMLUtils] - Criando no xml <document>");
 
         Document doc = new Document();
         doc.setName(fileName);
@@ -128,7 +128,7 @@ public class XMLUtils extends DocumentFolder {
         doc.setDocumentTypeCode(encodingCodeXml); //TODO veriricar
         doc.setContent(pdfBase64);
 
-        log.debug("[PDFUtils] - Fim criando no xml <document>");
+        log.debug("[XMLUtils] - Fim criando no xml <document>");
         return doc;
     }
 
@@ -160,11 +160,14 @@ public class XMLUtils extends DocumentFolder {
 
             String tagXml = doc.getElementsByTagName(tag).item(0).getTextContent();
 
+            xmlStream.close();
+            
             return tagXml;
         } catch (ParserConfigurationException | SAXException | NullPointerException| IOException e) {
             log.error(Throwables.getStackTraceAsString(e));
         }
         return "";
     }
+    
 
 }
