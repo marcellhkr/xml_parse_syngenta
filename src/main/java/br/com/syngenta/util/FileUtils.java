@@ -2,7 +2,6 @@ package br.com.syngenta.util;
 
 import br.com.syngenta.exception.BusinessException;
 import br.com.syngenta.message.MessageEnum;
-import com.google.common.base.Throwables;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -10,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -108,5 +108,22 @@ public class FileUtils {
         return ignoreFile;
 
     }
+    
+    public String createDir(String pathDiretorio) throws InterruptedException {
+    			
+		 pathDiretorio = pathDiretorio + File.separator;
+		
+	     File dir = new File(pathDiretorio);
+	     if (!dir.exists()) {
+	    	 if (dir.mkdirs()) {
+	    		 log.debug("[FileUtils] - Diretorio criado! {}", dir.getAbsolutePath());
+	             Thread.sleep(2000);
+	          } else {
+	        	  log.error("[FileUtils] - Falha ao criar diretorio {}", dir.getAbsolutePath());
+	          }
+	      }
+	      
+	      return pathDiretorio;
+	}
 
 }
