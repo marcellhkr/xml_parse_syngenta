@@ -89,7 +89,7 @@ public class XmlParseSyngentaService {
         //verifica se precisa criar o diretorio temporario
         String tmpDir = "";
         try {
-        	tmpDir = fileUtils.createDir(System.getProperty("java.io.tmpdir") + File.separator + xmlTmpDirectory);
+        	tmpDir = fileUtils.createDir(System.getProperty("user.dir") + File.separator + xmlTmpDirectory);
 		} catch (InterruptedException e1) {
 		}
         
