@@ -27,9 +27,10 @@ public class XmlParseSyngentaService {
     public static final String DELIVERY_NUMBER = "deliveryNumber";
     public static final String ORDER_NUMBER = "orderNumber";
     public static final String SHIPMENT_NUMBER = "shipmentNumber";
-    public static final String XML = ".XML";
+    public static final String XML = ".xml";
     public static final String CONTENT = "content";
     public static final String PDF = ".pdf";
+    public static final String SFTP = "sftp";
 
     @Autowired
     PDFUtils pdfUtils;
@@ -88,11 +89,11 @@ public class XmlParseSyngentaService {
         //verifica se precisa criar o diretorio temporario
         String tmpDir = "";
         try {
-        	tmpDir = fileUtils.createDir(System.getProperty("user.dir") + File.separator + xmlTmpDirectory);
+        	tmpDir = fileUtils.createDir(System.getProperty("java.io.tmpdir") + File.separator + xmlTmpDirectory);
 		} catch (InterruptedException e1) {
 		}
         
-        if (configSourceXml.equals("sftp")) {
+        if (configSourceXml.equals(SFTP)) {
         	try {
         		ChannelSftp channelSftp = sftpUtil.connectSftp(sftpHost, sftpPort, sftpUser, sftpPassword);
         		Vector<LsEntry> listFiles = sftpUtil.listFilesSftp(channelSftp, sftpWorkingDir);

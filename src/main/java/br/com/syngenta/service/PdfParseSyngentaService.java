@@ -24,7 +24,12 @@ import java.util.List;
 public class PdfParseSyngentaService {
 
     private static final Logger log = LogManager.getLogger(PdfParseSyngentaService.class.getName());
-
+    public static final String PDF = ".pdf";
+    public static final String FILE_TARGET_NAME = "SyngentaDocumentFolderInbound.xml";
+    public static final String ORDER_NUMBER = "ordernumber";
+    public static final String DELIVERY_NUMBER = "deliverynumber";
+    public static final String SFTP = "sftp";
+    
     @Autowired
     PDFUtils pdfUtils;
 
@@ -79,12 +84,12 @@ public class PdfParseSyngentaService {
         //verifica se precisa criar o diretorio temporario
         String tmpDir = "";
         try {
-        	tmpDir = fileUtils.createDir(System.getProperty("user.dir") + File.separator + xmlTmpDirectory);
+        	tmpDir = fileUtils.createDir(System.getProperty("java.io.tmpdir") + File.separator + xmlTmpDirectory);
 		} catch (InterruptedException e1) {
 		}
 
         // verificando arquivos do diretorio de pdf´s de origem
-        listFilesPDFs = fileUtils.readFilesFromPath(pdfSourceDirectory, ".PDF");
+        listFilesPDFs = fileUtils.readFilesFromPath(pdfSourceDirectory, PDF);
 
         // percorre a lista de arquivos pdf e gera o xml para cada um
         for (int i = 0; i < listFilesPDFs.size(); i++) {
@@ -103,16 +108,16 @@ public class PdfParseSyngentaService {
                 xmlFinal.setHeader(xmlUtils.createDocumentFolderHeader());
 
                 // Documento Folder Detail
-                String orderNumber = fileUtils.getOrderDeliveryNumber(fileNamePdf, "ordernumber");
-                String deliveryNumber = fileUtils.getOrderDeliveryNumber(fileNamePdf, "deliverynumber");
-                String fileName = fileUtils.addTimestampToFileName("SyngentaDocumentFolderInbound.xml");
+                String orderNumber = fileUtils.getOrderDeliveryNumber(fileNamePdf, ORDER_NUMBER);
+                String deliveryNumber = fileUtils.getOrderDeliveryNumber(fileNamePdf, DELIVERY_NUMBER);
+                String fileName = fileUtils.addTimestampToFileName(FILE_TARGET_NAME);
                 Document doc = xmlUtils.createDocument(pdfBase64, fileName);
                 xmlFinal.getDocumentFolderDetail().add(xmlUtils.createDocumentFolderDetail(deliveryNumber, orderNumber,doc));
 
                 //gera o arquivo
                 xmlUtils.jaxbObjectToXML(xmlFinal, tmpDir + fileName);
 
-                if (configSourceXml.equals("sftp")) {
+                if (configSourceXml.equals(SFTP)) {
                 	try {
                 		ChannelSftp channelSftp = sftpUtil.connectSftp(sftpHost, sftpPort, sftpUser, sftpPassword);
                 		sftpUtil.putFileSftp(channelSftp, tmpDir + fileName, sftpWorkingDir);

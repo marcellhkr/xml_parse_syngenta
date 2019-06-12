@@ -15,9 +15,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -33,7 +35,7 @@ public class FileUtils {
         try (Stream<Path> walk = Files.walk(Paths.get(dir))) {
 
             listFiles = walk.map(x -> x.getFileName().toString())
-                    .filter(f -> f.toUpperCase().endsWith(ext))
+                    .filter(f -> f.toUpperCase().endsWith(ext.toUpperCase()))
                     .collect(Collectors.toList());
 
             listFiles.forEach(x -> log.debug("[FileUtils] - Arquivo: {}", x));
@@ -125,5 +127,30 @@ public class FileUtils {
 	      
 	      return pathDiretorio;
 	}
+    
+    public void DeleteBkpFiles(String path, String ext, int months) throws Exception {
+    	log.debug("[FileUtils] - Apagando arquivos de backup");
+    	List<String> listFiles = this.readFilesFromPath(path, ext);
+    	
+    	int days = months * 31;
+    	
+    	for (String fileBkp : listFiles) {
+    		
+    		File file = new File(path + File.separator + fileBkp);
+    		Path filePath = file.toPath();
+    		BasicFileAttributes attr = Files.readAttributes(filePath, BasicFileAttributes.class);    		
+    		
+    		long diff = new Date().getTime() - attr.creationTime().to(TimeUnit.MILLISECONDS);
+    		if (diff > days * 24 * 60 * 60 * 1000) {
+    			if (file.delete()) {
+    				log.debug("[FileUtils] - Arquivo {} apagado!", file.getName());
+    			} else {
+    				log.debug("[FileUtils] - Erro ao apagar arquivo {}!", file.getName());
+    			}
+    			
+    		}
+		}
+    	
+    }
 
 }
