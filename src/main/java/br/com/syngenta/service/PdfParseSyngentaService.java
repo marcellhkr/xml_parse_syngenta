@@ -25,7 +25,6 @@ public class PdfParseSyngentaService {
 
     private static final Logger log = LogManager.getLogger(PdfParseSyngentaService.class.getName());
     public static final String PDF = ".pdf";
-    public static final String FILE_TARGET_NAME = "SyngentaDocumentFolderInbound.xml";
     public static final String ORDER_NUMBER = "ordernumber";
     public static final String DELIVERY_NUMBER = "deliverynumber";
     public static final String SFTP = "sftp";
@@ -71,6 +70,9 @@ public class PdfParseSyngentaService {
     
     @Value("${property.workingdir.sftp.in}")
     String sftpWorkingDir;
+    
+    @Value("${property.file.name.xml}")
+    String fileTargetName;
 
     public void runService() {
 
@@ -110,7 +112,7 @@ public class PdfParseSyngentaService {
                 // Documento Folder Detail
                 String orderNumber = fileUtils.getOrderDeliveryNumber(fileNamePdf, ORDER_NUMBER);
                 String deliveryNumber = fileUtils.getOrderDeliveryNumber(fileNamePdf, DELIVERY_NUMBER);
-                String fileName = fileUtils.addTimestampToFileName(FILE_TARGET_NAME);
+                String fileName = fileUtils.addTimestampToFileName(fileTargetName);
                 Document doc = xmlUtils.createDocument(pdfBase64, fileName);
                 xmlFinal.getDocumentFolderDetail().add(xmlUtils.createDocumentFolderDetail(deliveryNumber, orderNumber,doc));
 
