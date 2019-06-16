@@ -115,7 +115,7 @@ public class XMLUtils extends DocumentFolder {
         dfHeader.setDocumentType(documentTypeXml);
         dfHeader.setSenderId(senderId);
         dfHeader.setReceiverId(receiverId);
-        return header;
+        return dfHeader;
     }
 
     public Document createDocument(String pdfBase64, String fileName) throws Exception {
