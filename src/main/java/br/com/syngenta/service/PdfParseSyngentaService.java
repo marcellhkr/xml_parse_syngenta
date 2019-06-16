@@ -28,6 +28,7 @@ public class PdfParseSyngentaService {
     public static final String ORDER_NUMBER = "ordernumber";
     public static final String DELIVERY_NUMBER = "deliverynumber";
     public static final String SFTP = "sftp";
+    public static final String DOC_TYPE = "docType";
     
     @Autowired
     PDFUtils pdfUtils;
@@ -112,8 +113,9 @@ public class PdfParseSyngentaService {
                 // Documento Folder Detail
                 String orderNumber = fileUtils.getOrderDeliveryNumber(fileNamePdf, ORDER_NUMBER);
                 String deliveryNumber = fileUtils.getOrderDeliveryNumber(fileNamePdf, DELIVERY_NUMBER);
+                String docType = fileUtils.getOrderDeliveryNumber(fileNamePdf, DOC_TYPE);
                 String fileName = fileUtils.addTimestampToFileName(fileTargetName);
-                Document doc = xmlUtils.createDocument(pdfBase64, fileName);
+                Document doc = xmlUtils.createDocument(pdfBase64, fileName, docType);
                 xmlFinal.getDocumentFolderDetail().add(xmlUtils.createDocumentFolderDetail(deliveryNumber, orderNumber,doc));
 
                 //gera o arquivo

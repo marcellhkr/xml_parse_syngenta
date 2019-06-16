@@ -118,14 +118,14 @@ public class XMLUtils extends DocumentFolder {
         return dfHeader;
     }
 
-    public Document createDocument(String pdfBase64, String fileName) throws Exception {
+    public Document createDocument(String pdfBase64, String fileName, String docType) throws Exception {
         log.debug("[XMLUtils] - Criando no xml <document>");
 
         Document doc = new Document();
         doc.setName(fileName);
         doc.setEncodingCode(encodingCodeXml);
         doc.setMimeType(mimeTypeXml);
-        doc.setDocumentTypeCode(encodingCodeXml); //TODO veriricar
+        doc.setDocumentTypeCode(docType);
         doc.setContent(pdfBase64);
 
         log.debug("[XMLUtils] - Fim criando no xml <document>");
@@ -147,7 +147,7 @@ public class XMLUtils extends DocumentFolder {
 //	}
 
     public String getTagXml(File fileXml, String tag)  {
-        log.debug("[PDFUtils] - Buscando tag <{}> no xml {}", tag, fileXml.getName());
+        log.debug("[XMLUtils] - Buscando tag <{}> no xml {}", tag, fileXml.getName());
 
         try {
             InputStream xmlStream = new FileInputStream(fileXml);
@@ -169,5 +169,4 @@ public class XMLUtils extends DocumentFolder {
         return "";
     }
     
-
 }

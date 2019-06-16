@@ -66,8 +66,10 @@ public class FileUtils {
 
             if (field.equals("ordernumber")) {
                 ret = fields[1];
+            } else if (field.equals("deliverynumber")) {
+                ret = fields[2];
             } else {
-                ret = fields[2].toUpperCase().replace(".PDF", "");
+            	 ret = fields[3].toUpperCase().replace(".PDF", "");
             }
 
             log.debug("[FileUtils] - {}: {}", field, ret);
