@@ -26,15 +26,15 @@ public class XMLUtils extends DocumentFolder {
     private static final Logger log = LogManager.getLogger(PDFUtils.class.getName());
     private static final Integer versionXml = 310;
     private static final String documentTypeXml = "DocumentFolder";
-    private static final String senderId = "OSGT";
-    private static final String receiverId = "SYNGENTA";
+    private static final String senderId = "SYNGENTA";
+    private static final String receiverId = "OSGT";
     private static final String messageFunctionCodeXml = "OriginalMerge";
     private static final String encodingCodeXml = "Base64";
     private static final String mimeTypeXml = "application/pdf";
     private static final String jaxbEncoding = "UTF-8";
 
     //PDF para o XML
-    public void jaxbObjectToXML(DocumentFolder documentFolder, String fileName) throws BusinessException{
+    public void jaxbObjectToXML(DocumentFolder documentFolder, File fileName) throws BusinessException{
         log.debug("[XMLUtils] - Iniciando geracao do arquivo XML: {}", fileName);
 
         try {

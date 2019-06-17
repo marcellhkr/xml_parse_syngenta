@@ -79,20 +79,18 @@ public class XmlParseSyngentaService {
 
     public void runService() {
 
-    	xmlTmpDirectory = xmlTmpDirectory.replace("/", "\\");
+/*    	xmlTmpDirectory = xmlTmpDirectory.replace("/", "\\");
     	xmlBkpDirectory = xmlBkpDirectory.replace("/", "\\").replace("IMPORTACAO", "IMPORTAÇÃO");
     	xmlErrorDirectory = xmlErrorDirectory.replace("/", "\\").replace("IMPORTACAO", "IMPORTAÇÃO");
     	pdfTargetDirectory = pdfTargetDirectory.replace("/", "\\").replace("IMPORTACAO", "IMPORTAÇÃO");
-    	
+    	*/
         List<String> listFilesXmls = null;
         
         //verifica se precisa criar o diretorio temporario
         String tmpDir = "";
-        try {
-        	tmpDir = fileUtils.createDir(System.getProperty("user.dir") + File.separator + xmlTmpDirectory);
-		} catch (InterruptedException e1) {
-		}
-        
+
+        tmpDir = fileUtils.createDir(System.getProperty("user.dir") + File.separator + xmlTmpDirectory);
+
         if (configSourceXml.equals(SFTP)) {
         	try {
         		ChannelSftp channelSftp = sftpUtil.connectSftp(sftpHost, sftpPort, sftpUser, sftpPassword);
@@ -100,7 +98,7 @@ public class XmlParseSyngentaService {
         		
         		for (int i=0;i<listFiles.size();i++) {
         			try {
-						sftpUtil.getFileSftp(channelSftp, listFiles.get(i).getFilename(), tmpDir);
+                        sftpUtil.getFileSftp(channelSftp, listFiles.get(i).getFilename(),tmpDir);
 					} catch (Exception e) {
 						log.error(Throwables.getStackTraceAsString(e));
 					}

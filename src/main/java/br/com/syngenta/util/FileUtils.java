@@ -11,12 +11,10 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -30,9 +28,9 @@ public class FileUtils {
 
     public List<String> readFilesFromPath(String dir, String ext) {
         log.debug("[FileUtils] - Carregando arquivos {} do diretorio {}", ext, dir);
-        List<String> listFiles = null;
+        List<String> listFiles = new ArrayList<String>();
 
-        try (Stream<Path> walk = Files.walk(Paths.get(dir))) {
+        try (Stream<Path> walk = Files.walk(Paths.get(dir), 1)) {
 
             listFiles = walk.map(x -> x.getFileName().toString())
                     .filter(f -> f.toUpperCase().endsWith(ext.toUpperCase()))
@@ -41,7 +39,6 @@ public class FileUtils {
             listFiles.forEach(x -> log.debug("[FileUtils] - Arquivo: {}", x));
 
         } catch (IOException e) {
-            //log.error(MessageEnum.FILE_UTILS_ERROR_001, dir, Throwables.getStackTraceAsString(e));
             log.error(new BusinessException(MessageEnum.FILE_UTILS_ERROR_001, e, dir));
         }
         log.debug("[FileUtils] - Fim arquivos {} do diretorio {}", ext, dir);
@@ -57,43 +54,37 @@ public class FileUtils {
         }
     }
 
-    public String getOrderDeliveryNumber(String fileName, String field) throws Exception {
-        log.debug("[FileUtils] - Tratando {} do nome do arquivo: {}", field, fileName);
-        String ret = "";
+    public String getOrderDeliveryNumber(String fileName, int pos) throws Exception {
+        log.debug("[FileUtils] - Tratando {} do nome do arquivo: {}", pos, fileName);
 
         try {
             String[] fields = fileName.split("-");
+            if(fields.length <= 1)
+                fields = fileName.split("_");
+            if(pos > fields.length - 1 )
+                log.error("[FileUtils] Erro ao procurar posicao- {}: {}", fileName, pos);
+            else
+                return fields[pos];
 
-            if (field.equals("ordernumber")) {
-                ret = fields[1];
-            } else if (field.equals("deliverynumber")) {
-                ret = fields[2];
-            } else {
-            	 ret = fields[3].toUpperCase().replace(".PDF", "");
-            }
-
-            log.debug("[FileUtils] - {}: {}", field, ret);
+            log.debug("[FileUtils] - {}", fileName);
         } catch (Exception e) {
-            throw new BusinessException(MessageEnum.FILE_UTILS_ERROR_002, e, field, fileName);
+            throw new BusinessException(MessageEnum.FILE_UTILS_ERROR_002, e, pos, fileName);
         }
 
-        return ret;
+
+        return "";
     }
 
     public String addTimestampToFileName(String fileName) {
-        try {
-            String ext = fileName.substring(fileName.lastIndexOf("."));
-            String name = fileName.substring(0, fileName.indexOf(ext));
-            String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-            Thread.sleep(1000);
-            String ret = name.concat("_" + timestamp).concat(ext);
 
-            log.debug("[FileUtils] - Novo nome do arquivo: {}", ret);
-            return ret;
-        } catch (InterruptedException e) {
-            log.error(e);
-            return "";
-        }
+        String ext = fileName.substring(fileName.lastIndexOf("."));
+        String name = fileName.substring(0, fileName.indexOf(ext));
+        String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+        //Thread.sleep(1000);
+        String ret = name.concat("_" + timestamp).concat(ext);
+
+        log.debug("[FileUtils] - Novo nome do arquivo: {}", ret);
+        return ret;
 
     }
 
@@ -113,15 +104,14 @@ public class FileUtils {
 
     }
     
-    public String createDir(String pathDiretorio) throws InterruptedException {
+    public String createDir(String pathDiretorio) {
     			
-		 pathDiretorio = pathDiretorio + File.separator;
+		 //pathDiretorio = pathDiretorio + File.separator;
 		
 	     File dir = new File(pathDiretorio);
 	     if (!dir.exists()) {
 	    	 if (dir.mkdirs()) {
 	    		 log.debug("[FileUtils] - Diretorio criado! {}", dir.getAbsolutePath());
-	             Thread.sleep(2000);
 	          } else {
 	        	  log.error("[FileUtils] - Falha ao criar diretorio {}", dir.getAbsolutePath());
 	          }

@@ -102,13 +102,12 @@ public class SftpUtil {
 	 }
 	 
 	 
-	 public void putFileSftp(ChannelSftp channelSftp, String sftpFile, String targetDir) throws Exception {
+	 public void putFileSftp(ChannelSftp channelSftp, File sftpFile, String targetDir) throws Exception {
 		 
 		 log.debug("[SftpUtil] - Uploading aquivo: {} para o diretorio: {} ", sftpFile,targetDir);
-		
-		 File file = new File(sftpFile);
+
 		 channelSftp.cd(targetDir);
-		 channelSftp.put(new FileInputStream(file), file.getName(), ChannelSftp.OVERWRITE);
+		 channelSftp.put(new FileInputStream(sftpFile), sftpFile.getName(), ChannelSftp.OVERWRITE);
 		
 		 log.debug("[SftpUtil] - Upload concluido! ");
 	 }

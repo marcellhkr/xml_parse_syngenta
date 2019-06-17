@@ -25,11 +25,10 @@ public class PdfParseSyngentaService {
 
     private static final Logger log = LogManager.getLogger(PdfParseSyngentaService.class.getName());
     public static final String PDF = ".pdf";
-    public static final String ORDER_NUMBER = "ordernumber";
-    public static final String DELIVERY_NUMBER = "deliverynumber";
     public static final String SFTP = "sftp";
-    public static final String DOC_TYPE = "docType";
-    
+    public static final String DIR = "dir";
+
+
     @Autowired
     PDFUtils pdfUtils;
 
@@ -38,7 +37,7 @@ public class PdfParseSyngentaService {
 
     @Autowired
     FileUtils fileUtils;
-    
+
     @Autowired
     SftpUtil sftpUtil;
 
@@ -53,43 +52,48 @@ public class PdfParseSyngentaService {
 
     @Value("${property.pdf.xml.tmp.directory}")
     String xmlTmpDirectory;
-    
+
     @Value("${property.config.source.target.xml}")
     String configSourceXml;
-    
+
     @Value("${property.host.sftp}")
     String sftpHost;
-    
+
     @Value("${property.port.sftp}")
     int sftpPort;
-    
+
     @Value("${property.user.sftp}")
     String sftpUser;
-    
+
     @Value("${property.pass.sftp}")
     String sftpPassword;
-    
+
     @Value("${property.workingdir.sftp.in}")
     String sftpWorkingDir;
-    
+
     @Value("${property.file.name.xml}")
     String fileTargetName;
 
     public void runService() {
 
-    	pdfSourceDirectory = pdfSourceDirectory.replace("/", "\\").replace("EXPORTACAO", "EXPORTAÇÃO");
+/*    	pdfSourceDirectory = pdfSourceDirectory.replace("/", "\\").replace("EXPORTACAO", "EXPORTAÇÃO");
     	pdfBkpDirectory = pdfBkpDirectory.replace("/", "\\").replace("EXPORTACAO", "EXPORTAÇÃO");
     	pdfErrorDirectory = pdfErrorDirectory.replace("/", "\\").replace("EXPORTACAO", "EXPORTAÇÃO");
-    	xmlTmpDirectory = xmlTmpDirectory.replace("/", "\\");
-    	
+    	xmlTmpDirectory = xmlTmpDirectory.replace("/", "\\");*/
+
         List<String> listFilesPDFs = null;
-        
+
+
+        fileUtils.createDir(pdfBkpDirectory);
+        fileUtils.createDir(pdfErrorDirectory);
+
         //verifica se precisa criar o diretorio temporario
-        String tmpDir = "";
+/*        String tmpDir = "";
         try {
         	tmpDir = fileUtils.createDir(System.getProperty("user.dir") + File.separator + xmlTmpDirectory);
 		} catch (InterruptedException e1) {
-		}
+            log.error(e1.getMessage());
+		}*/
 
         // verificando arquivos do diretorio de pdf´s de origem
         listFilesPDFs = fileUtils.readFilesFromPath(pdfSourceDirectory, PDF);
@@ -111,30 +115,34 @@ public class PdfParseSyngentaService {
                 xmlFinal.setHeader(xmlUtils.createDocumentFolderHeader());
 
                 // Documento Folder Detail
-                String orderNumber = fileUtils.getOrderDeliveryNumber(fileNamePdf, ORDER_NUMBER);
-                String deliveryNumber = fileUtils.getOrderDeliveryNumber(fileNamePdf, DELIVERY_NUMBER);
-                String docType = fileUtils.getOrderDeliveryNumber(fileNamePdf, DOC_TYPE);
-                String fileName = fileUtils.addTimestampToFileName(fileTargetName);
-                Document doc = xmlUtils.createDocument(pdfBase64, fileName, docType);
-                xmlFinal.getDocumentFolderDetail().add(xmlUtils.createDocumentFolderDetail(deliveryNumber, orderNumber,doc));
-
+                String shippingNumber = fileUtils.getOrderDeliveryNumber(fileNamePdf, 0);
+                String deliveryNumber = fileUtils.getOrderDeliveryNumber(fileNamePdf, 1);
+                String docType = fileUtils.getOrderDeliveryNumber(fileNamePdf, 2);
+                //String fileName = fileUtils.addTimestampToFileName(fileTargetName);
                 //gera o arquivo
-                xmlUtils.jaxbObjectToXML(xmlFinal, tmpDir + fileName);
+                File tempFile = File. createTempFile(fileTargetName, ".xml");
+                Document doc = xmlUtils.createDocument(pdfBase64, tempFile.getName(), docType);
+                xmlFinal.getDocumentFolderDetail().add(xmlUtils.createDocumentFolderDetail(deliveryNumber, shippingNumber,doc));
+
+
+                xmlUtils.jaxbObjectToXML(xmlFinal, tempFile);
 
                 if (configSourceXml.equals(SFTP)) {
                 	try {
                 		ChannelSftp channelSftp = sftpUtil.connectSftp(sftpHost, sftpPort, sftpUser, sftpPassword);
-                		sftpUtil.putFileSftp(channelSftp, tmpDir + fileName, sftpWorkingDir);
+                		sftpUtil.putFileSftp(channelSftp, tempFile, sftpWorkingDir);
                 		channelSftp.disconnect();
                 		//File fileDelete = new File(tmpDir + fileName);
                 		//fileDelete.delete();
                 	} catch (Exception e) {
                 		log.error(Throwables.getStackTraceAsString(e));
                 	}
-                } 
-                
+                }else if(configSourceXml.equals(DIR)){
+                    tempFile.renameTo(new File(pdfSourceDirectory + tempFile.getName()));
+                }
+
                 fileUtils.moveFile(pathFileNamePdf, pathFileNameBkpPdf);
-                
+
 
             } catch (Exception e) {
                 log.error("[PDF_SERVICE] - Erro ao processar arquivo {}. ERRO: {}", file, Throwables.getStackTraceAsString(e));
