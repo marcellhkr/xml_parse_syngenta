@@ -148,7 +148,7 @@ public class XMLUtils extends DocumentFolder {
 
     public String getTagXml(File fileXml, String tag)  {
         log.debug("[XMLUtils] - Buscando tag <{}> no xml {}", tag, fileXml.getName());
-
+        String tagXml = "";
         try {
             InputStream xmlStream = new FileInputStream(fileXml);
             InputSource is = new InputSource();
@@ -158,15 +158,15 @@ public class XMLUtils extends DocumentFolder {
             DocumentBuilder db = dbf.newDocumentBuilder();
             org.w3c.dom.Document doc = db.parse(is);
 
-            String tagXml = doc.getElementsByTagName(tag).item(0).getTextContent();
+            tagXml = doc.getElementsByTagName(tag).item(0).getTextContent();
 
             xmlStream.close();
-            
-            return tagXml;
+
         } catch (ParserConfigurationException | SAXException | NullPointerException| IOException e) {
             log.error("[XMLUtils] - Erro achar tag {} do arquivo {}",tag,  fileXml.getName(),e);
+        }finally {
+            return tagXml;
         }
-        return "";
     }
     
 }
