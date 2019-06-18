@@ -17,7 +17,7 @@ public class XmlParseSyngentaSchedule {
     @Autowired
     XmlParseSyngentaService xmlParseSyngentaService;
 
-    @Scheduled(cron = "${prop.cron.xml.schedule}")
+    @Scheduled(cron = "${prop.cron.xml.schedule:0 0/5 * * * *}")
     public void runSchedule() {
         //System.out.println("\n");
         log.debug("#################### .: Inicio do processamento XML Parser Syngenta:. #################### ");

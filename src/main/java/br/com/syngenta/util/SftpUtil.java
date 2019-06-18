@@ -9,23 +9,20 @@ import java.io.OutputStream;
 import java.util.Properties;
 import java.util.Vector;
 
+import com.jcraft.jsch.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.Throwables;
-import com.jcraft.jsch.Channel;
-import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.ChannelSftp.LsEntry;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.Session;
 
 @Component
 public class SftpUtil {
 
 	 private static final Logger log = LogManager.getLogger(SftpUtil.class.getName());
 	
-	 public ChannelSftp connectSftp(String sftpHost, int sftpPort, String sftpUser, String sftpPassword) throws Exception {
+	 public ChannelSftp connectSftp(String sftpHost, int sftpPort, String sftpUser, String sftpPassword) throws JSchException {
 		 log.debug("[SftpUtil] - Conectando servidor sftp {}", sftpHost);
 		 
 		 Session session = null;

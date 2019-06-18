@@ -164,7 +164,7 @@ public class XMLUtils extends DocumentFolder {
             
             return tagXml;
         } catch (ParserConfigurationException | SAXException | NullPointerException| IOException e) {
-            log.error(Throwables.getStackTraceAsString(e));
+            log.error("[XMLUtils] - Erro achar tag {} do arquivo {}",tag,  fileXml.getName(),e);
         }
         return "";
     }

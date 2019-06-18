@@ -1,15 +1,13 @@
 package br.com.syngenta.service;
 
-import br.com.syngenta.util.FileUtils;
-import br.com.syngenta.util.PDFUtils;
-import br.com.syngenta.util.SftpUtil;
-import br.com.syngenta.util.XMLUtils;
+import br.com.syngenta.util.*;
 import br.com.syngenta.xml.mapper.DocumentFolder;
 import br.com.syngenta.xml.mapper.DocumentFolder.DocumentFolderDetail.Document;
 import com.google.common.base.Throwables;
 import com.jcraft.jsch.ChannelSftp;
 
 
+import com.jcraft.jsch.JSchException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -28,75 +27,73 @@ public class PdfParseSyngentaService {
     public static final String SFTP = "sftp";
     public static final String DIR = "dir";
 
-
-    @Autowired
-    PDFUtils pdfUtils;
-
-    @Autowired
-    XMLUtils xmlUtils;
-
-    @Autowired
-    FileUtils fileUtils;
-
-    @Autowired
-    SftpUtil sftpUtil;
-
     @Value("${property.pdf.source.directory}")
-    String pdfSourceDirectory;
+    public String pdfSourceDirectory;
 
     @Value("${property.pdf.bkp.directory}")
-    String pdfBkpDirectory;
+    public String pdfBkpDirectory;
 
     @Value("${property.pdf.error.directory}")
-    String pdfErrorDirectory;
-
-    @Value("${property.pdf.xml.tmp.directory}")
-    String xmlTmpDirectory;
+    public String pdfErrorDirectory;
 
     @Value("${property.config.source.target.xml}")
-    String configSourceXml;
+    public String configSourceXml;
+
+    @Value("${property.pdf.xml.tmp.directory}")
+    public String xmlTmpDirectory;
 
     @Value("${property.host.sftp}")
-    String sftpHost;
+    public String sftpHost;
 
     @Value("${property.port.sftp}")
     int sftpPort;
 
     @Value("${property.user.sftp}")
-    String sftpUser;
+    public String sftpUser;
 
     @Value("${property.pass.sftp}")
-    String sftpPassword;
+    public String sftpPassword;
 
     @Value("${property.workingdir.sftp.in}")
-    String sftpWorkingDir;
+    public String sftpWorkingDir;
 
     @Value("${property.file.name.xml}")
-    String fileTargetName;
+    public String fileTargetName;
+
+
+    @Autowired
+    public PDFUtils pdfUtils;
+
+    @Autowired
+    public XMLUtils xmlUtils;
+
+    @Autowired
+    public FileUtils fileUtils;
+
+    @Autowired
+    public SftpUtil sftpUtil;
+
+    private ChannelSftp channelSftp;
+
 
     public void runService() {
-
-/*    	pdfSourceDirectory = pdfSourceDirectory.replace("/", "\\").replace("EXPORTACAO", "EXPORTAÇÃO");
-    	pdfBkpDirectory = pdfBkpDirectory.replace("/", "\\").replace("EXPORTACAO", "EXPORTAÇÃO");
-    	pdfErrorDirectory = pdfErrorDirectory.replace("/", "\\").replace("EXPORTACAO", "EXPORTAÇÃO");
-    	xmlTmpDirectory = xmlTmpDirectory.replace("/", "\\");*/
-
-        List<String> listFilesPDFs = null;
-
-
-        fileUtils.createDir(pdfBkpDirectory);
-        fileUtils.createDir(pdfErrorDirectory);
-
-        //verifica se precisa criar o diretorio temporario
-/*        String tmpDir = "";
-        try {
-        	tmpDir = fileUtils.createDir(System.getProperty("user.dir") + File.separator + xmlTmpDirectory);
-		} catch (InterruptedException e1) {
-            log.error(e1.getMessage());
-		}*/
+        List<String> listFilesPDFs = new ArrayList<String>();
 
         // verificando arquivos do diretorio de pdf´s de origem
         listFilesPDFs = fileUtils.readFilesFromPath(pdfSourceDirectory, PDF);
+
+        fileUtils.createDir(pdfBkpDirectory);
+        fileUtils.createDir(pdfErrorDirectory);
+        if (configSourceXml.equals(SFTP) && !listFilesPDFs.isEmpty()) {
+            try {
+                channelSftp = sftpUtil.connectSftp(sftpHost, sftpPort, sftpUser, sftpPassword);
+
+            } catch (JSchException e) {
+                log.error("Erro ao conectar no SFTP",e.getMessage());
+                return;
+            }
+        }
+
 
         // percorre a lista de arquivos pdf e gera o xml para cada um
         for (int i = 0; i < listFilesPDFs.size(); i++) {
@@ -129,11 +126,7 @@ public class PdfParseSyngentaService {
 
                 if (configSourceXml.equals(SFTP)) {
                 	try {
-                		ChannelSftp channelSftp = sftpUtil.connectSftp(sftpHost, sftpPort, sftpUser, sftpPassword);
                 		sftpUtil.putFileSftp(channelSftp, tempFile, sftpWorkingDir);
-                		channelSftp.disconnect();
-                		//File fileDelete = new File(tmpDir + fileName);
-                		//fileDelete.delete();
                 	} catch (Exception e) {
                 		log.error(Throwables.getStackTraceAsString(e));
                 	}
@@ -148,7 +141,9 @@ public class PdfParseSyngentaService {
                 log.error("[PDF_SERVICE] - Erro ao processar arquivo {}. ERRO: {}", file, Throwables.getStackTraceAsString(e));
                 fileUtils.moveFile(pdfSourceDirectory + file, pdfErrorDirectory + fileNamePdfBkp);
             }
-
+        }
+        if (configSourceXml.equals(SFTP)) {
+            channelSftp.disconnect();
         }
     }
 

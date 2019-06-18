@@ -19,7 +19,7 @@ public class CleanBkpFilesParseSyngentaSchedule {
     @Autowired
     CleanBkpFilesParseSyngentaService cleanBkpFilesParseSyngentaService;
 
-    @Scheduled(cron = "${prop.cron.clean.bkp.files.schedule}")
+    @Scheduled(cron = "${prop.cron.clean.bkp.files.schedule:0 0/5 * * * *}")
     public void runSchedule() {
         //System.out.println("\n");
         log.debug("#################### .: Inicio do processamento Clean Backup Files Parser Syngenta:. #################### ");

@@ -7,7 +7,6 @@ import br.com.syngenta.util.XMLUtils;
 import com.google.common.base.Throwables;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.ChannelSftp.LsEntry;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +23,10 @@ public class XmlParseSyngentaService {
     private static final Logger log = LogManager.getLogger(XmlParseSyngentaService.class.getName());
     public static final String IS_IMPORT_CUSTOMS = "isImportCustoms";
     public static final String DOCUMENT_TYPE_CODE = "documentTypeCode";
-    public static final String DELIVERY_NUMBER = "deliveryNumber";
-    public static final String ORDER_NUMBER = "orderNumber";
+    public static final String DELIVERY_NUMBER = "billOfLadingNumber";
+    public static final String ORDER_NUMBER = "demandPONumber";
     public static final String SHIPMENT_NUMBER = "shipmentNumber";
+    public static final String DOC_TYPE = "documentTypeCode";
     public static final String XML = ".xml";
     public static final String CONTENT = "content";
     public static final String PDF = ".pdf";
@@ -40,7 +40,7 @@ public class XmlParseSyngentaService {
 
     @Autowired
     FileUtils fileUtils;
-    
+
     @Autowired
     SftpUtil sftpUtil;
 
@@ -58,64 +58,60 @@ public class XmlParseSyngentaService {
 
     @Value("${property.json.ignore.document.type}")
     String ignoreDocumentTypes;
-    
+
+    @Value("${property.xml.pdf.read.directory:}")
+    public String pdfReadDirectory;
+
     @Value("${property.config.source.target.xml}")
     String configSourceXml;
-    
+
     @Value("${property.host.sftp}")
     String sftpHost;
-    
+
     @Value("${property.port.sftp}")
     int sftpPort;
-    
+
     @Value("${property.user.sftp}")
     String sftpUser;
-    
+
     @Value("${property.pass.sftp}")
     String sftpPassword;
-    
+
     @Value("${property.workingdir.sftp.out}")
     String sftpWorkingDir;
 
     public void runService() {
 
-/*    	xmlTmpDirectory = xmlTmpDirectory.replace("/", "\\");
-    	xmlBkpDirectory = xmlBkpDirectory.replace("/", "\\").replace("IMPORTACAO", "IMPORTAÇÃO");
-    	xmlErrorDirectory = xmlErrorDirectory.replace("/", "\\").replace("IMPORTACAO", "IMPORTAÇÃO");
-    	pdfTargetDirectory = pdfTargetDirectory.replace("/", "\\").replace("IMPORTACAO", "IMPORTAÇÃO");
-    	*/
+        fileUtils.createDir(xmlBkpDirectory);
+        fileUtils.createDir(xmlErrorDirectory);
+        fileUtils.createDir(pdfReadDirectory);
+
         List<String> listFilesXmls = null;
-        
+
         //verifica se precisa criar o diretorio temporario
         String tmpDir = "";
 
-        tmpDir = fileUtils.createDir(System.getProperty("user.dir") + File.separator + xmlTmpDirectory);
-
         if (configSourceXml.equals(SFTP)) {
-        	try {
-        		ChannelSftp channelSftp = sftpUtil.connectSftp(sftpHost, sftpPort, sftpUser, sftpPassword);
-        		Vector<LsEntry> listFiles = sftpUtil.listFilesSftp(channelSftp, sftpWorkingDir);
-        		
-        		for (int i=0;i<listFiles.size();i++) {
-        			try {
-                        sftpUtil.getFileSftp(channelSftp, listFiles.get(i).getFilename(),tmpDir);
-					} catch (Exception e) {
-						log.error(Throwables.getStackTraceAsString(e));
-					}
-        		}//        		
-//        		listFiles.forEach(x -> {
-//					try {
-//						sftpUtil.getFileSftp(channelSftp, x.getFilename(), tmpDir);
-//					} catch (Exception e) {
-//						log.error(Throwables.getStackTraceAsString(e));
-//					}
-//				});
-        		channelSftp.disconnect();
-        		
-        	} catch (Exception e) {
-        		log.error(Throwables.getStackTraceAsString(e));
-        	}
-        	
+            tmpDir = fileUtils.createDir(System.getProperty("user.dir") + File.separator + xmlTmpDirectory);
+            try {
+                ChannelSftp channelSftp = sftpUtil.connectSftp(sftpHost, sftpPort, sftpUser, sftpPassword);
+                Vector<LsEntry> listFiles = sftpUtil.listFilesSftp(channelSftp, sftpWorkingDir);
+
+                for (int i = 0; i < listFiles.size(); i++) {
+                    try {
+                        sftpUtil.getFileSftp(channelSftp, listFiles.get(i).getFilename(), tmpDir);
+                    } catch (Exception e) {
+                        log.error(Throwables.getStackTraceAsString(e));
+                    }
+                }
+                channelSftp.disconnect();
+
+            } catch (Exception e) {
+                log.error(Throwables.getStackTraceAsString(e));
+            }
+
+        } else if (configSourceXml.equals("dir")) {
+            tmpDir = pdfReadDirectory;
         }
 
         // verificando arquivos do diretorio temporario de xml´s
@@ -145,25 +141,9 @@ public class XmlParseSyngentaService {
                 String deliveryNumber = xmlUtils.getTagXml(fileXml, DELIVERY_NUMBER);
                 String orderNumber = xmlUtils.getTagXml(fileXml, ORDER_NUMBER);
                 String shipmentNumber = xmlUtils.getTagXml(fileXml, SHIPMENT_NUMBER);
+                String docType = xmlUtils.getTagXml(fileXml, DOC_TYPE);
 
-                if (!deliveryNumber.isEmpty()) {
-                    pdfFileName += deliveryNumber;
-                }
-                if (!orderNumber.isEmpty()) {
-                    if (pdfFileName.isEmpty()) {
-                        pdfFileName += orderNumber;
-                    } else {
-                        pdfFileName += "-" + orderNumber;
-                    }
-
-                }
-                if (!shipmentNumber.isEmpty()) {
-                    if (pdfFileName.isEmpty()) {
-                        pdfFileName += shipmentNumber;
-                    } else {
-                        pdfFileName += "-" + shipmentNumber;
-                    }
-                }
+                pdfFileName = fileName(deliveryNumber, orderNumber, shipmentNumber,docType);
 
                 String pathFileNamePdfTarget = pdfTargetDirectory + pdfFileName + PDF;
 
@@ -183,4 +163,18 @@ public class XmlParseSyngentaService {
 
     }
 
+    private String fileName(String... fields) {
+        String pdfFileName = "";
+        for (String field : fields) {
+            if (pdfFileName.isEmpty()) {
+                pdfFileName += field;
+
+            } else {
+                pdfFileName += "_" + field;
+
+            }
+        }
+        return pdfFileName;
+    }
 }
+

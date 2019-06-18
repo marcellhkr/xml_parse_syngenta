@@ -18,7 +18,7 @@ public class PdfParseSyngentaSchedule {
     @Autowired
     PdfParseSyngentaService pdfParseSyngentaService;
 
-    @Scheduled(cron = "${prop.cron.pdf.schedule}")
+    @Scheduled(cron = "${prop.cron.pdf.schedule:0 0/5 * * * *}")
     public void runSchedule() {
         //System.out.println("\n");
         log.debug("#################### .: Inicio do processamento PDF Parser Syngenta:. #################### ");
