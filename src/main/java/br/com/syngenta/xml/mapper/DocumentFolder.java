@@ -29,7 +29,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *                 &lt;sequence>
  *                   &lt;element name="version" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *                   &lt;element name="documentType" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *                   &lt;element name="messageId" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
+ *                   &lt;element name="messageId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *                   &lt;element name="senderId" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *                   &lt;element name="receiverId" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *                   &lt;element name="count" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
@@ -1095,7 +1095,7 @@ public class DocumentFolder {
      *       &lt;sequence>
      *         &lt;element name="version" type="{http://www.w3.org/2001/XMLSchema}int"/>
      *         &lt;element name="documentType" type="{http://www.w3.org/2001/XMLSchema}string"/>
-     *         &lt;element name="messageId" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
+     *         &lt;element name="messageId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
      *         &lt;element name="senderId" type="{http://www.w3.org/2001/XMLSchema}string"/>
      *         &lt;element name="receiverId" type="{http://www.w3.org/2001/XMLSchema}string"/>
      *         &lt;element name="count" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
@@ -1134,7 +1134,7 @@ public class DocumentFolder {
         protected int version;
         @XmlElement(required = true)
         protected String documentType;
-        protected Integer messageId;
+        protected String messageId;
         @XmlElement(required = true)
         protected String senderId;
         @XmlElement(required = true)
@@ -1188,10 +1188,10 @@ public class DocumentFolder {
          * 
          * @return
          *     possible object is
-         *     {@link Integer }
+         *     {@link String }
          *     
          */
-        public Integer getMessageId() {
+        public String getMessageId() {
             return messageId;
         }
 
@@ -1200,10 +1200,10 @@ public class DocumentFolder {
          * 
          * @param value
          *     allowed object is
-         *     {@link Integer }
+         *     {@link String }
          *     
          */
-        public void setMessageId(Integer value) {
+        public void setMessageId(String value) {
             this.messageId = value;
         }
 

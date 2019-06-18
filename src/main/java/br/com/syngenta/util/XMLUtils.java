@@ -97,7 +97,7 @@ public class XMLUtils extends DocumentFolder {
         DocumentFolderDetail dfDetail = new DocumentFolderDetail();
         dfDetail.setMessageFunctionCode(messageFunctionCodeXml);
         dfDetail.getDeliveryNumber().add(delivery);
-        dfDetail.getOrderNumber().add(orderNumber);
+        dfDetail.getShipmentNumber().add(orderNumber);
         dfDetail.setDocument(doc);
         // Document Folder Party - DocumentProvider/DocumentOwner
         dfDetail.getParty().add(createDocumentFolderDetailParty( "DocumentProvider", "DOC_PROVIDER_ID", "OSGT"));
@@ -113,8 +113,8 @@ public class XMLUtils extends DocumentFolder {
         Header dfHeader = new Header();
         dfHeader.setVersion(versionXml);
         dfHeader.setDocumentType(documentTypeXml);
+        dfHeader.setMessageId(receiverId);
         dfHeader.setSenderId(senderId);
-        dfHeader.setReceiverId(receiverId);
         return dfHeader;
     }
 
@@ -133,18 +133,6 @@ public class XMLUtils extends DocumentFolder {
     }
 
 
-//	public String getTagContentXml(File fileXml) throws Exception {
-//		log.debug("[PDFUtils] - Buscando tag <content> no xml {}", fileXml.getName());
-//		
-//		DocumentFolder df =  this.xmlToJaxbObject(fileXml);
-//		
-//		DocumentFolderDetail dfDetail = df.getDocumentFolderDetail().get(0);
-//		
-//		String pdfBase64 = dfDetail.getDocument().getContent();
-//		
-//		log.debug("[PDFUtils] - Fim buscando tag <content> no xml {}", fileXml.getName());
-//		return pdfBase64;
-//	}
 
     public String getTagXml(File fileXml, String tag)  {
         log.debug("[XMLUtils] - Buscando tag <{}> no xml {}", tag, fileXml.getName());

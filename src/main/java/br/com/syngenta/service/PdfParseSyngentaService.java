@@ -114,6 +114,7 @@ public class PdfParseSyngentaService {
                 // Documento Folder Detail
                 String shippingNumber = fileUtils.getOrderDeliveryNumber(fileNamePdf, 0);
                 String deliveryNumber = fileUtils.getOrderDeliveryNumber(fileNamePdf, 1);
+
                 String docType = fileUtils.getOrderDeliveryNumber(fileNamePdf, 2);
                 //String fileName = fileUtils.addTimestampToFileName(fileTargetName);
                 //gera o arquivo

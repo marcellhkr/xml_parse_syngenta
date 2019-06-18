@@ -8,7 +8,7 @@
                         <xs:sequence>
                             <xs:element name="version" type="xs:int" minOccurs="1" maxOccurs="1"></xs:element>
                             <xs:element name="documentType" type="xs:string" minOccurs="1" maxOccurs="1"></xs:element>
-                            <xs:element name="messageId" type="xs:int" minOccurs="0"></xs:element>
+                            <xs:element name="messageId" type="xs:string" minOccurs="0"></xs:element>
                             <xs:element name="senderId" type="xs:string"></xs:element>
                             <xs:element name="receiverId" type="xs:string"></xs:element>
                             <xs:element name="count" type="xs:int" minOccurs="0"></xs:element>
