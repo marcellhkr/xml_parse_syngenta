@@ -15,5 +15,5 @@ echo #--------------------------------------------------------------------------
 echo # ROBO PARSE SYNGENTA %ROBO% INICIADO EM %ROBO_HOME% , JAR EM %LIB_DIR% e LOG EM %LOG_DIR% #
 echo #------------------------------------------------------------------------------------------------------------------#
 
-TASKLIST /NH /FI "IMAGENAME eq %ROBO%" | FIND /I "%1" > NUL
+TASKLIST /NH /FI "IMAGENAME eq %ROBO" | FIND /I "%1" > NUL
 IF %ERRORLEVEL%==0 java -jar %LIB_DIR%/%JAR_ROBO% > %LOG_DIR%/%LOG_ROBO%
